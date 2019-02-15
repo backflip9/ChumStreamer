@@ -1,6 +1,6 @@
 #include "authdialog.h"
 #include "ui_authdialog.h"
-#include "sub_ping_3.h"
+#include "ChumStreamer.h"
 #include <QDialog>
 #include<QDebug>
 #include<QFile>
@@ -69,7 +69,7 @@ void authDialog::on_loginButton_clicked()
     }
 }
 
-void authDialog::setParentClass(sub_ping_3 *oneClass)
+void authDialog::setParentClass(ChumStreamer *oneClass)
 {
     parentClass=oneClass;
 }

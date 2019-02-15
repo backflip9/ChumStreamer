@@ -1,5 +1,5 @@
-#ifndef SUB_PING_3_H
-#define SUB_PING_3_H
+#ifndef CHUMSTREAMER_H
+#define CHUMSTREAMER_H
 
 #include <QMainWindow>
 #include<QtNetwork/QNetworkAccessManager>
@@ -16,16 +16,16 @@ class QByteArray;
 class QMediaPlayer;
 
 namespace Ui {
-class sub_ping_3;
+class ChumStreamer;
 }
 
-class sub_ping_3 : public QMainWindow
+class ChumStreamer : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit sub_ping_3(QWidget *parent = nullptr);
-    ~sub_ping_3();
+    explicit ChumStreamer(QWidget *parent = nullptr);
+    ~ChumStreamer();
     //QString& Server(){return server;}
     QUrl& Server(){return server;}
     QString& Username(){return username;}
@@ -94,7 +94,7 @@ private:
       QString folderId;
     };
     */
-    Ui::sub_ping_3 *ui;
+    Ui::ChumStreamer *ui;
     QNetworkAccessManager manager;
     //QVector<QNetworkReply* > replyVec;
     //QNetworkReply* reply;
@@ -124,4 +124,4 @@ private:
     void streamSongQIO();
 };
 
-#endif // SUB_PING_3_H
+#endif // CHUMSTREAMER_H
