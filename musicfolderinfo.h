@@ -5,13 +5,15 @@ struct musicFolderInfo
   musicFolderInfo(){name="";id="";}
   musicFolderInfo(QString name,QString id):name(name),id(id){}
   musicFolderInfo(QString name,QString id,bool isSong):name(name),id(id),isSong(isSong){}
+  musicFolderInfo(const musicFolderInfo& other):name(other.name),id(other.id),isSong(other.isSong){}
+  /*
   musicFolderInfo(const musicFolderInfo& other)
   {
     name=other.name;
     id=other.id;
     isSong=other.isSong;
   }
-  //musicFolderInfo(QString name,QString id,bool isSong):name(name),id(id),isSong(isSong){}
+  */
 
   //members
   QString name;
