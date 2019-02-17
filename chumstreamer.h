@@ -107,12 +107,14 @@ private:
     void addToPlaylistFromSlot(bool prepend);
     QMediaPlayer* player = new QMediaPlayer;
     QByteArray currentSong;
-    //QMediaPlayer *player;
     const int DEFAULT_VOLUME=20;
     int currentPlaylistIndex;
     void streamSong();
     bool chooseNext();
+    //stores whether the user last pressed E or A, since we're going to be adding playlist items in slot functions that i don't know how to pass args to
+    bool latestPrepend=false;
     void streamSongQIO();
+    void firstRecursiveRequest(QString id);
 };
 
 #endif // CHUMSTREAMER_H
