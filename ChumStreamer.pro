@@ -1,19 +1,15 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2019-01-04T02:07:12
+# Project created by QtCreator 2019-02-15T16:56:18
 #
 #-------------------------------------------------
 
-QT       += core gui network xml multimedia
+QT       += core gui xml multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = sub_ping_3
+TARGET = chumstreamer
 TEMPLATE = app
-
-LIBS += -L"$$_PRO_FILE_PWD_/pugixml/"
-#LIBS += -L"$$_PRO_FILE_PWD_/pugixml/" -lpsapi
-#LIBS += -L"$$_PRO_FILE_PWD_/pugixml/" -lmylib
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -30,22 +26,21 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        sub_ping_3.cpp \
-    authdialog.cpp \
-    chumlistitem.cpp \
-    clickablelist.cpp
+        chumstreamer.cpp \
+    clickablelist.cpp \
+    authdialog.cpp
 
 HEADERS += \
-        sub_ping_3.h \
-    authdialog.h \
+        chumstreamer.h \
+    musicfolderinfo.h \
+    clickablelist.h \
     chumlistitem.h \
-    clickablelist.h
+    authdialog.h
 
 FORMS += \
-        sub_ping_3.ui \
+        chumstreamer.ui \
     authdialog.ui
 
-#newcomment
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

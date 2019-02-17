@@ -2,6 +2,7 @@
 #define CHUMSTREAMER_H
 
 #include <QMainWindow>
+#include <QMainWindow>
 #include<QtNetwork/QNetworkAccessManager>
 #include<QVector>
 #include<QMediaPlayer>
@@ -16,17 +17,16 @@ class QByteArray;
 class QMediaPlayer;
 
 namespace Ui {
-class ChumStreamer;
+class chumstreamer;
 }
 
-class ChumStreamer : public QMainWindow
+class chumstreamer : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit ChumStreamer(QWidget *parent = nullptr);
-    ~ChumStreamer();
-    //QString& Server(){return server;}
+    explicit chumstreamer(QWidget *parent = nullptr);
+    ~chumstreamer();
     QUrl& Server(){return server;}
     QString& Username(){return username;}
     QString& Password(){return password;}
@@ -40,7 +40,7 @@ private slots:
     void on_pushButton_clicked();
     void bufferStream();
     void notifySongEnd();
-    void playFile();
+    //void playFile();
     void on_configureButton_clicked();
     //void on_nextButton_clicked();
     //helpers:
@@ -85,16 +85,7 @@ private slots:
     void on_nextTrackButton_clicked();
 
 private:
-    //we're including the header now
-    /*
-    struct musicFolderInfo{
-      musicFolderInfo(){folderName="";folderId="";}
-      musicFolderInfo(QString name,QString id):folderName(name),folderId(id){}
-      QString folderName;
-      QString folderId;
-    };
-    */
-    Ui::ChumStreamer *ui;
+    Ui::chumstreamer *ui;
     QNetworkAccessManager manager;
     //QVector<QNetworkReply* > replyVec;
     //QNetworkReply* reply;

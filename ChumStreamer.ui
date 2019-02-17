@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>sub_ping_3</class>
- <widget class="QMainWindow" name="sub_ping_3">
+ <class>chumstreamer</class>
+ <widget class="QMainWindow" name="chumstreamer">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>sub_ping_3</string>
+   <string>ChumStreamer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QPushButton" name="pushButton">
