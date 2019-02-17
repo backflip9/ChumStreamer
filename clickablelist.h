@@ -15,6 +15,7 @@ public:
 
 signals:
     void Clicked();
+    void Clear();
     //void ClickedWithEvent(QMouseEvent* m);
     void playlistAppend();
     void playlistPrepend();

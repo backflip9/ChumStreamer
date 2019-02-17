@@ -63,6 +63,9 @@ void clickableList::keyPressEvent(QKeyEvent* k)
     case Qt::Key_H:
       emit Back();
       break;
+    case Qt::Key_X:
+      emit Clear();
+      break;
     default:
       qDebug() << "that key is irrelevant";
       break;

@@ -15,6 +15,8 @@ class QStringList;
 class QListWidgetItem;
 class QByteArray;
 class QMediaPlayer;
+class ChumListItem;
+class QDomNodeList;
 
 namespace Ui {
 class chumstreamer;
@@ -84,6 +86,10 @@ private slots:
 
     void on_nextTrackButton_clicked();
 
+    void playlistAddRecursive();
+
+    void on_artistListWidget_Clear();
+
 private:
     Ui::chumstreamer *ui;
     QNetworkAccessManager manager;
@@ -104,7 +110,8 @@ private:
     QVector<musicFolderInfo> prevDirIDVec;
     void keyPressEvent(QKeyEvent*);
     void mouseReleaseEvent(QMouseEvent*);
-    void addToPlaylistFromSlot(bool prepend);
+    //void addToPlaylistFromSlot(bool prepend,ChumListItem optionalChum=NULL);
+    void addToPlaylistFromSlot(bool prepend,ChumListItem* optionalChum=NULL);
     QMediaPlayer* player = new QMediaPlayer;
     QByteArray currentSong;
     const int DEFAULT_VOLUME=20;
@@ -115,6 +122,7 @@ private:
     bool latestPrepend=false;
     void streamSongQIO();
     void firstRecursiveRequest(QString id);
+    void playlistAddFromNodeList(QDomNodeList oneList,int index);
 };
 
 #endif // CHUMSTREAMER_H
