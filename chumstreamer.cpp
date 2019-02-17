@@ -82,7 +82,7 @@ QUrl chumstreamer::buildQueryString(QString page)
   QUrlQuery myQuery;
   myQuery.addQueryItem("u",Username());
   myQuery.addQueryItem("p",Password());
-  myQuery.addQueryItem("c","sub_ping");
+  myQuery.addQueryItem("c","ChumStreamer");
   myQuery.addQueryItem("v","1.15.0");
   result.setQuery(myQuery);
   qDebug()<< "buildQueryString: "<<result.toString();
@@ -161,8 +161,6 @@ void chumstreamer::getMusicFolders()
   oneReply->deleteLater();
   oneReply=nullptr;
   qDebug("success");
-  //was gonna use this from stackoverflow but then i found the qlistwidget.clear() method
-  //qDeleteAll(ui->musicFolderListWidget->sele
   ui->musicFolderListWidget->clear();
   //myFile.close();
   //i guess we don't need qdomelements in the first place??
@@ -175,21 +173,17 @@ void chumstreamer::getMusicFolders()
   for(int j=0;j<oneNodeList.length();j++)
   {
     QDomNode oneMusicFolder=oneNodeList.at(j);
-    //musicFolderList << oneMusicFolder.attributes().namedItem("name").nodeValue();
-    musicFolderVec.push_back(musicFolderInfo(oneMusicFolder.attributes().namedItem("name").nodeValue(),oneMusicFolder.attributes().namedItem("id").nodeValue()));
-    QListWidgetItem *oneFolderCheckbox = new QListWidgetItem(oneMusicFolder.attributes().namedItem("name").nodeValue(),ui->musicFolderListWidget);
-    //we're using the constructor that we made for the subclass ChumListItem that has an artistID which actually is just an ID that refers to the music folder it represents. we set that ID as the 3rd argument to the ctor here.
-    //ChumListItem *oneFolderCheckbox = new ChumListItem(oneMusicFolder.attributes().namedItem("name").nodeValue(),ui->musicFolderListWidget,oneMusicFolder.attributes().namedItem("id").nodeValue());
+    ChumListItem *oneFolderCheckbox = new ChumListItem(oneMusicFolder.attributes().namedItem("name").nodeValue(),oneMusicFolder.attributes().namedItem("id").nodeValue());
+    ui->musicFolderListWidget->addItem(oneFolderCheckbox);
     oneFolderCheckbox->setFlags(oneFolderCheckbox->flags() | Qt::ItemIsUserCheckable);
     oneFolderCheckbox->setCheckState(Qt::Checked);
   }
+  on_pushButton_clicked();
 }
 
 void chumstreamer::setMusicFolders()
 {
   //initialize a network request and call getMusicFolders to change the values in the combobox based on the auth details entered in the authDialog
-  //QNetworkRequest getMusicFoldersRequest(buildQueryString("getMusicFolders"));
-  //QNetworkReply* musicFoldersReply=manager.get(getMusicFoldersRequest);
   QNetworkReply* musicFoldersReply=manager.get(QNetworkRequest(buildQueryString("getMusicFolders")));
   connect(musicFoldersReply,&QNetworkReply::finished,this,&chumstreamer::getMusicFolders);
 }
@@ -230,13 +224,13 @@ void chumstreamer::on_pushButton_clicked()
   {
     if(ui->musicFolderListWidget->item(counter)->checkState()==Qt::Checked)
     {
-      qDebug() << musicFolderVec[counter].name << " was checked!!";
+      qDebug() << ui->musicFolderListWidget->item(counter)->text() << " was checked!!";
       //call setMusicFolders to add them to the qlistwidget. we aren't gonna pass a qstringlist by reference thru all those stack frames even if it might be easier, we're just gonna call setMusicFolders multiple times until the artist list is populated with all the relevant items
       QUrl currentUrl=originalUrl;
       QUrlQuery currentQuery(currentUrl.query());
       //this isn't working atm
       //currentQuery.addQueryItem(ui->musicFolderListWidget->item(counter)->getArtistID());
-      currentQuery.addQueryItem("musicFolderId",musicFolderVec[counter].id);
+      currentQuery.addQueryItem("musicFolderId",dynamic_cast<ChumListItem *>(ui->musicFolderListWidget->item(counter))->info->id);
       currentUrl.setQuery(currentQuery);
       qDebug("query to be sent to addArtists():");
       //qDebug(currentUrl.query());
@@ -464,7 +458,7 @@ void chumstreamer::streamSongQIO()
   QUrl streamUrl=buildQueryString("stream");
   QUrlQuery currentQuery(streamUrl.query());
   currentQuery.addQueryItem("id",dynamic_cast<ChumListItem *>(ui->playlistListWidget->item(currentPlaylistIndex))->info->id);
-  streamUrl.setQuery(currentQuery.query());
+  streamUrl.setQuery(currentQuery);
   QNetworkRequest streamRequest(streamUrl);
   QNetworkReply* streamReply=manager.get(streamRequest);
   connect(streamReply,&QNetworkReply::readyRead,this,&chumstreamer::bufferStream);
@@ -492,7 +486,7 @@ void chumstreamer::notifySongEnd()
   if(oneMedia->mediaStatus()==QMediaPlayer::EndOfMedia)
   {
     qDebug() << "media has ended!";
-    ui->playlistListWidget->item(currentPlaylistIndex)->setForeground(Qt::white);
+    ui->playlistListWidget->item(currentPlaylistIndex)->setForeground(Qt::cyan);
     if(chooseNext()){return streamSong();}
   }
   else
@@ -563,7 +557,7 @@ void chumstreamer::on_artistListWidget_currentRowChanged(int currentRow)
   //currentQuery.addQueryItem("id",ui->artistListWidget->item(currentRow)->data(Qt::ToolTipRole).toString());
   currentQuery.addQueryItem("id",dynamic_cast<ChumListItem *>(ui->artistListWidget->item(currentRow))->info->id);
   qDebug() << "currentRowChanged: got song id from chumlistitem: "<<dynamic_cast<ChumListItem *>(ui->artistListWidget->item(currentRow))->info->id;
-  songRequest.setQuery(currentQuery.query());
+  songRequest.setQuery(currentQuery);
   QNetworkRequest getSongInfoRequest(songRequest);
   QNetworkReply* songInfoReply=manager.get(getSongInfoRequest);
   connect(songInfoReply,&QNetworkReply::finished,this,&chumstreamer::setSongInfo);
