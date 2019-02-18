@@ -16,7 +16,7 @@ class QListWidgetItem;
 class QByteArray;
 class QMediaPlayer;
 class ChumListItem;
-class QDomNodeList;
+class QDomNode;
 
 namespace Ui {
 class chumstreamer;
@@ -90,6 +90,10 @@ private slots:
 
     void on_artistListWidget_Clear();
 
+    void on_volumeSlider_sliderReleased();
+
+    void on_randomToggleButton_clicked();
+
 private:
     Ui::chumstreamer *ui;
     QNetworkAccessManager manager;
@@ -107,6 +111,7 @@ private:
     void songInfoDisplay(bool hide);
     QStringList artistList;
     QVector<musicFolderInfo> musicFolderVec;
+    void playlistAddFromChumListItem(ChumListItem* oneChum,bool prepend);
     QVector<musicFolderInfo> prevDirIDVec;
     void keyPressEvent(QKeyEvent*);
     void mouseReleaseEvent(QMouseEvent*);
@@ -115,14 +120,23 @@ private:
     QMediaPlayer* player = new QMediaPlayer;
     QByteArray currentSong;
     const int DEFAULT_VOLUME=20;
-    int currentPlaylistIndex;
+    int getCurrentPlaylistIndex();
     void streamSong();
     bool chooseNext();
     //stores whether the user last pressed E or A, since we're going to be adding playlist items in slot functions that i don't know how to pass args to
     bool latestPrepend=false;
-    void streamSongQIO();
+    //will work on this later
+    //void streamSongQIO();
     void firstRecursiveRequest(QString id);
-    void playlistAddFromNodeList(QDomNodeList oneList,int index);
+    void playlistAddFromNode(QDomNode oneDir);
+    void setImage(QString songID);
+    void getSongInfo(QString songID);
+    void grayOutPlaylist();
+    QString currentAlbumArt=0;
+    bool repeating();
+    void toggleRepeating();
+    bool random();
+    void toggleRandom();
 };
 
 #endif // CHUMSTREAMER_H

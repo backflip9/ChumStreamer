@@ -235,7 +235,7 @@
    <widget class="QPushButton" name="nextTrackButton">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>360</x>
       <y>540</y>
       <width>31</width>
       <height>24</height>
@@ -245,6 +245,19 @@
      <string>&gt;|</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="randomToggleButton">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>540</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>random off</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -252,7 +265,7 @@
      <x>0</x>
      <y>0</y>
      <width>765</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
@@ -270,6 +283,7 @@
     <signal>playlistPrepend()</signal>
     <signal>ReturnKey()</signal>
     <signal>Back()</signal>
+    <signal>Clear()</signal>
    </slots>
   </customwidget>
  </customwidgets>
