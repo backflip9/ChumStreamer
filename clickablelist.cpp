@@ -55,12 +55,14 @@ void clickableList::keyPressEvent(QKeyEvent* k)
       break;
     case Qt::Key_L:
     case Qt::Key_Return:
+    case Qt::Key_Right:
       if(currentItem()!=nullptr)
       {
         emit ReturnKey();
       }
       break;
     case Qt::Key_H:
+    case Qt::Key_Left:
       emit Back();
       break;
     case Qt::Key_X:
