@@ -874,10 +874,7 @@ int chumstreamer::getCurrentPlaylistIndex()
     }
     //else the playlist is empty or something
     if(viableVec.size()==0){return 0;}
-    int randomInt=rand();
-    qDebug() << "random int: "<<randomInt;
-    randomInt=randomInt%viableVec.size();
-    return viableVec[randomInt];
+    return viableVec[rand() % viableVec.size()];
   }
   //case 2: there aren't any red songs, so return the first non-cyan song
   for(int i=0;i<ui->playlistListWidget->count();i++)
