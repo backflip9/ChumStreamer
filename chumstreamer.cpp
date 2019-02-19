@@ -737,7 +737,9 @@ void chumstreamer::playlistAddFromChumListItem(ChumListItem* oneChum,bool prepen
       if(prepend && ui->playlistListWidget->count()!=0)
       { 
         //qDebug() << "prending at: "<<index;
-        ui->playlistListWidget->insertItem(getCurrentPlaylistIndex()+1,newChum);
+        int offset=1;
+        if(player->status()==Qt::StoppedState){offset=0;}
+        ui->playlistListWidget->insertItem(getCurrentPlaylistIndex()+offset,newChum);
         //ui->playlistListWidget->insertItem(getCurrentPlaylistIndex()+1,newChum);
       }
       else{
