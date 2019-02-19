@@ -94,6 +94,8 @@ private slots:
 
     void on_randomToggleButton_clicked();
 
+    void on_clearButton_clicked();
+
 private:
     Ui::chumstreamer *ui;
     QNetworkAccessManager manager;

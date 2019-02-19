@@ -17,7 +17,7 @@
 #include<algorithm>
 #include "chumlistitem.h"
 #include "authdialog.h"
-
+//#include "md5.cpp";
 #include "chumstreamer.h"
 #include "ui_chumstreamer.h"
 
@@ -32,6 +32,7 @@ chumstreamer::chumstreamer(QWidget *parent) :
   //ui->imageLabel->hide();
   ui->pwdLabel->hide();
   ui->nextButton->hide();
+  ui->playPauseButton->hide();
   ui->volumeSlider->setTickInterval(2);
   ui->volumeSlider->setRange(0,100);
   ui->volumeSlider->setValue(DEFAULT_VOLUME);
@@ -445,7 +446,21 @@ void chumstreamer::on_addButton_clicked()
 
 void chumstreamer::on_playButton_clicked()
 {
-  return streamSong();
+  if(player->state()==QMediaPlayer::PlayingState)
+  {
+    player->pause();
+    qDebug() << "paused!";
+  }
+  else if(player->state()==QMediaPlayer::PausedState)
+  {
+    player->play();
+    qDebug() << "playing!";
+  }
+  else if(player->state()==QMediaPlayer::StoppedState)
+  {
+    qDebug() << "playpause: neither!";
+    return on_nextTrackButton_clicked();
+  }
 }
 
 void chumstreamer::streamSong()
@@ -554,20 +569,6 @@ bool chumstreamer::chooseNext()
 
 void chumstreamer::on_playPauseButton_clicked()
 {
-  if(player->state()==QMediaPlayer::PlayingState)
-  {
-    player->pause();
-    qDebug() << "paused!";
-  }
-  else if(player->state()==QMediaPlayer::PausedState)
-  {
-    player->play();
-    qDebug() << "playing!";
-  }
-  else
-  {
-    qDebug() << "playpause: neither!";
-  }
 }
 
 void chumstreamer::on_pushButton_2_clicked()
@@ -928,4 +929,9 @@ void chumstreamer::toggleRandom()
   else{
     ui->randomToggleButton->setText("random on");
   }
+}
+
+void chumstreamer::on_clearButton_clicked()
+{
+  on_artistListWidget_Clear();
 }

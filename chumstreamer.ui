@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>765</width>
-    <height>621</height>
+    <height>612</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>120</y>
+      <y>60</y>
       <width>161</width>
       <height>81</height>
      </rect>
@@ -53,8 +53,8 @@
    <widget class="QPushButton" name="nextButton">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>210</y>
+      <x>540</x>
+      <y>0</y>
       <width>80</width>
       <height>24</height>
      </rect>
@@ -66,7 +66,7 @@
    <widget class="QLabel" name="pwdLabel">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>240</x>
       <y>10</y>
       <width>421</width>
       <height>20</height>
@@ -89,14 +89,14 @@
      </rect>
     </property>
     <property name="text">
-     <string>empty text</string>
+     <string/>
     </property>
    </widget>
    <widget class="QPushButton" name="backButton">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>30</y>
+      <x>190</x>
+      <y>10</y>
       <width>31</width>
       <height>21</height>
      </rect>
@@ -108,8 +108,8 @@
    <widget class="QPushButton" name="playButton">
     <property name="geometry">
      <rect>
-      <x>89</x>
-      <y>260</y>
+      <x>90</x>
+      <y>150</y>
       <width>41</width>
       <height>21</height>
      </rect>
@@ -121,8 +121,8 @@
    <widget class="QPushButton" name="playPauseButton">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>230</y>
+      <x>630</x>
+      <y>0</y>
       <width>80</width>
       <height>24</height>
      </rect>
@@ -134,9 +134,9 @@
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>260</y>
-      <width>80</width>
+      <x>10</x>
+      <y>150</y>
+      <width>71</width>
       <height>24</height>
      </rect>
     </property>
@@ -189,7 +189,7 @@
       <x>200</x>
       <y>30</y>
       <width>271</width>
-      <height>491</height>
+      <height>531</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -222,8 +222,8 @@
    <widget class="QPushButton" name="repeatToggleButton">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>540</y>
+      <x>10</x>
+      <y>180</y>
       <width>80</width>
       <height>24</height>
      </rect>
@@ -235,8 +235,8 @@
    <widget class="QPushButton" name="nextTrackButton">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>540</y>
+      <x>140</x>
+      <y>150</y>
       <width>31</width>
       <height>24</height>
      </rect>
@@ -248,14 +248,27 @@
    <widget class="QPushButton" name="randomToggleButton">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>540</y>
+      <x>100</x>
+      <y>180</y>
       <width>71</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
      <string>random off</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="clearButton">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>210</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>clear</string>
     </property>
    </widget>
   </widget>
