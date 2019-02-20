@@ -139,6 +139,7 @@ private:
     void toggleRepeating();
     bool random();
     void toggleRandom();
+  bool hasRed();
 };
 
 #endif // CHUMSTREAMER_H

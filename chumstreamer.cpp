@@ -738,7 +738,7 @@ void chumstreamer::playlistAddFromChumListItem(ChumListItem* oneChum,bool prepen
       { 
         //qDebug() << "prending at: "<<index;
         int offset=1;
-        if(player->status()==Qt::StoppedState){offset=0;}
+        if(hasRed()){offset=0;}
         ui->playlistListWidget->insertItem(getCurrentPlaylistIndex()+offset,newChum);
         //ui->playlistListWidget->insertItem(getCurrentPlaylistIndex()+1,newChum);
       }
@@ -936,4 +936,13 @@ void chumstreamer::toggleRandom()
 void chumstreamer::on_clearButton_clicked()
 {
   on_artistListWidget_Clear();
+}
+
+bool chumstreamer::hasRed()
+{
+  for(int i=0;i<ui->playlistListWidget->count();i++)
+  {
+    if(ui->playlistListWidget->item(i)->foreground()==Qt::red){return true;}
+  }
+  return false;
 }
