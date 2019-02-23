@@ -20,6 +20,7 @@
 //#include "md5.cpp";
 #include "chumstreamer.h"
 #include "ui_chumstreamer.h"
+#include<time.h>
 
 chumstreamer::chumstreamer(QWidget *parent) :
     QMainWindow(parent),
