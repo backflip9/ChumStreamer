@@ -110,7 +110,7 @@ void chumstreamer::addArtists()
   oneReply->deleteLater();
   oneReply=nullptr;
   qDebug("addartists success");
-  if(player->state()!=QMediaPlayer::StoppedState)
+  if(player->state()==QMediaPlayer::StoppedState)
   {
     songInfoDisplay(false);
     ui->imageLabel->hide();
@@ -209,14 +209,9 @@ void chumstreamer::on_pushButton_clicked()
 
   //hide things that aren't relevant anymore
   ui->artistListWidget->clear();
+  //handles its own conditions concerning the player's state
   songInfoDisplay(false);
   ui->pwdLabel->hide();
-  /*
-  if(player->state()==Qt::StoppedState)
-  {
-    ui->imageLabel->hide();
-  }
-  */
   prevDirIDVec.clear();
   prevDirIDVec.push_front(musicFolderInfo("","-1"));
 
