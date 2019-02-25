@@ -18,6 +18,7 @@ public:
     ~authDialog();
     void setParentClass(chumstreamer *oneClass);
     void setAuthInfo();
+    void setTextBoxes();
 
 private slots:
     void on_loginButton_clicked();
@@ -26,7 +27,6 @@ private:
     Ui::authDialog *ui;
     chumstreamer *parentClass;
     QString cacheFilePath=QDir::homePath() + "/subping.dat";
-    void setTextBoxes();
 };
 
 #endif // AUTHDIALOG_H

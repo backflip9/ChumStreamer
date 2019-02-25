@@ -32,10 +32,9 @@ public:
     QUrl& Server(){return server;}
     QString& Username(){return username;}
     QString& Password(){return password;}
-    //i used this for testing when i forgot how pointers worked
-    //QString getServer(){return server;}
-    //void setServer(QString serverTxt){server=serverTxt;}
     void setDir(const QString& dir);
+    //public for authdialog to use
+    void writeSave();
 
 private slots:
     //buttons:
@@ -139,7 +138,9 @@ private:
     void toggleRepeating();
     bool random();
     void toggleRandom();
-  bool hasRed();
+    //QJsonDocument readSave();
+    bool applyFromSave();
+    bool hasRed();
 };
 
 #endif // CHUMSTREAMER_H

@@ -35,6 +35,9 @@ void authDialog::on_loginButton_clicked()
     parentClass->Username()=ui->usernameEdit->text();
     parentClass->Password()=ui->passwordEdit->text();
     qDebug() << "Set!";
+    //now that we have writeSave(), we don't need all the other stuff
+    parentClass->writeSave();
+    /*
     if(QFile(cacheFilePath).exists())
     {
       if(QFile(cacheFilePath).remove()){
@@ -65,8 +68,8 @@ void authDialog::on_loginButton_clicked()
         dat.write("\n");
         dat.write(ui->passwordEdit->text().toLatin1());
         dat.close();
-
     }
+    */
 }
 
 void authDialog::setParentClass(chumstreamer *oneClass)
@@ -84,7 +87,8 @@ void authDialog::setAuthInfo()
       return;
     }
 
-    //case 2: 
+    //case 2: this is the first time and we have to set the class members by reading from the save file
+    /*
     if(QDir(QDir::homePath()).exists(QFile(cacheFilePath).fileName()))
     {
         qDebug() << "file exists in homePath()";
@@ -108,6 +112,7 @@ void authDialog::setAuthInfo()
     }
     qDebug() << "fileName:";
     qDebug() << cacheFilePath;
+    */
 }
 
 void authDialog::setTextBoxes()
@@ -115,11 +120,10 @@ void authDialog::setTextBoxes()
   ui->serverEdit->setText(parentClass->Server().host());
   ui->usernameEdit->setText(parentClass->Username());
   ui->passwordEdit->setText(parentClass->Password());
-  qDebug() << "SERVER PORT: "<<parentClass->Server().port();
   ui->portEdit->setText(QString::number(parentClass->Server().port()));
   if(parentClass->Server().scheme()=="https"){ui->httpsCheckBox->setCheckState(Qt::Checked);}
   /*
-  else if(server.scheme()=="https")
+  else if(server.scheme()=="http")
   {
     ui->httpsCheckBox->setCheckState(Qt::Unchecked);
   }

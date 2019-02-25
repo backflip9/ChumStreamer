@@ -14,6 +14,8 @@
 #include<QUrl>
 #include<QUrlQuery>
 #include<QDebug>
+#include<QJsonObject>
+#include<QJsonDocument>
 #include<algorithm>
 #include "chumlistitem.h"
 #include "authdialog.h"
@@ -29,7 +31,7 @@ chumstreamer::chumstreamer(QWidget *parent) :
   srand(time(NULL));
   ui->setupUi(this);
   filePath = QDir::homePath() + "/Documents/tmpDownload.xml";
-  cacheFilePath=QDir::homePath() + "/subping.dat";
+  cacheFilePath=QDir::homePath() + "/chumstreamer.json";
   //ui->imageLabel->hide();
   ui->pwdLabel->hide();
   ui->nextButton->hide();
@@ -45,6 +47,11 @@ chumstreamer::chumstreamer(QWidget *parent) :
   qDebug() << "something written in vim\n";
   //copypaste from authDialog class
   //populate the members with auth info from the dat file, if it exists
+  if(applyFromSave())
+  {
+    setMusicFolders();
+  }
+  /*
   if(QDir(QDir::homePath()).exists(QFile(cacheFilePath).fileName()))
   {
       qDebug() << "file exists in homePath()";
@@ -67,6 +74,7 @@ chumstreamer::chumstreamer(QWidget *parent) :
   {
       qDebug() << "dat didn't exist";
   }
+  */
 }
 
 chumstreamer::~chumstreamer()
@@ -195,11 +203,13 @@ void chumstreamer::on_configureButton_clicked()
 {
   authDialog authD;
   authD.setParentClass(this);
-  authD.setAuthInfo();
+  //we shouldn't have to call this since we're gonna call applyFromSave on startup
+  //authD.setAuthInfo();
+  authD.setTextBoxes();
   authD.setModal(true);
   authD.exec();
   setMusicFolders();
-  qDebug() << server;
+  qDebug() << server.toString();
   qDebug() << username;
   qDebug() << password;
 }
@@ -941,4 +951,84 @@ bool chumstreamer::hasRed()
     if(ui->playlistListWidget->item(i)->foreground()==Qt::red){return true;}
   }
   return false;
+}
+void chumstreamer::writeSave()
+{
+  QFile tmp(cacheFilePath);
+  /*
+  if(tmp.exists())
+  {
+    if(tmp.open(QIODevice::ReadWrite | QIODevice::Truncate))
+    {
+      QJsonDocument currentDoc;
+      currentDoc.fromJson(tmp.readAll());
+      tmp.close();
+    }
+    else
+    {
+      qDebug() << "couldn't open save file, even though it exists";
+      return;
+    }
+    currentDoc.
+  }
+  */
+  if(false){}
+  else
+  {
+    qDebug() << "creating json save file...";
+    QJsonObject loginInfo;
+    /*
+    loginInfo.insert("username",Username());
+    loginInfo.insert("password",Password());
+    loginInfo.insert("server",Server().toString());
+    loginInfo.insert("volume",QString::number(ui->volumeSlider->value()));
+    loginInfo.insert("server",Server().toString());
+    */
+    loginInfo["username"]=Username();
+    loginInfo["password"]=Password();
+    loginInfo["server"]=Server().toString();
+    //loginInfo["volume"]=QString::number(ui->volumeSlider->value());
+    loginInfo["volume"]=ui->volumeSlider->value();
+    loginInfo["server"]=Server().toString();
+    if(tmp.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+      //QJsonDocument docToWrite(loginInfo);
+      tmp.write(QJsonDocument(loginInfo).toJson());
+      tmp.close();
+      qDebug() << "wrote to save file: " << cacheFilePath;
+    }
+    else{
+      qDebug() << "couldn't open save file, even though it doesn't exist";
+    }
+  }
+}
+
+bool chumstreamer::applyFromSave()
+{
+  QFile saveFile(cacheFilePath);
+  if(saveFile.exists())
+  {
+    if(saveFile.open(QIODevice::ReadOnly))
+    {
+      QJsonObject saveData(QJsonDocument().fromJson(saveFile.readAll()).object());
+      QJsonDocument currentDoc;
+      currentDoc.fromJson(saveFile.readAll());
+      saveFile.close();
+      Server()=saveData["server"].toString();
+      Username()=saveData["username"].toString();
+      Password()=saveData["password"].toString();
+      ui->volumeSlider->setValue(saveData["volume"].toInt());
+      qDebug() << "created QJsonObject from file and applied to main object members";
+      return true;
+    }
+    else
+    {
+      qDebug() << "couldn't open save file, even though it exists";
+      return false;
+    }
+  }
+  else{
+    qDebug() << "save file didn't exist, couldn't apply";
+    return false;
+  }
 }
