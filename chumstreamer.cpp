@@ -170,15 +170,12 @@ void chumstreamer::getMusicFolders()
   //delete the reply so that subsequent queries won't fail?
   oneReply->deleteLater();
   oneReply=nullptr;
-  qDebug("success");
   ui->musicFolderListWidget->clear();
   //myFile.close();
   //i guess we don't need qdomelements in the first place??
   QDomElement oneElement=myDoc.documentElement();
   //the progression should be <subsonic-response> -> <artists> -> many <index> tags
   QDomNode musicFoldersTag=oneElement.firstChild();
-  //QDomNode artistsTag= myDoc.namedItem("artists");
-  //QDomNode twoNode;
   QDomNodeList oneNodeList=musicFoldersTag.childNodes();
   for(int j=0;j<oneNodeList.length();j++)
   {
@@ -186,7 +183,15 @@ void chumstreamer::getMusicFolders()
     ChumListItem *oneFolderCheckbox = new ChumListItem(oneMusicFolder.attributes().namedItem("name").nodeValue(),oneMusicFolder.attributes().namedItem("id").nodeValue());
     ui->musicFolderListWidget->addItem(oneFolderCheckbox);
     oneFolderCheckbox->setFlags(oneFolderCheckbox->flags() | Qt::ItemIsUserCheckable);
-    oneFolderCheckbox->setCheckState(Qt::Checked);
+    if(checkedFolders[j]=="0")
+    {
+      qDebug() << "checked folders string had a zero at this index; unchecked";
+      oneFolderCheckbox->setCheckState(Qt::Unchecked);
+    }
+    else{
+      qDebug() << "checked folders string had a one at this index; checked";
+      oneFolderCheckbox->setCheckState(Qt::Checked);
+    }
   }
   on_pushButton_clicked();
 }
@@ -232,10 +237,12 @@ void chumstreamer::on_pushButton_clicked()
   //qDebug() << "requesting at "<<myUrl.path() << myUrl.query();
   //add iterator here to loop through the folder IDs that were checked
   //QList checkboxList=ui->musicFolderListWidget->count()
+  QString modelBitmask="";
   for(int counter=0;counter<ui->musicFolderListWidget->count();counter++)
   {
     if(ui->musicFolderListWidget->item(counter)->checkState()==Qt::Checked)
     {
+      modelBitmask += "1";
       qDebug() << ui->musicFolderListWidget->item(counter)->text() << " was checked!!";
       //call setMusicFolders to add them to the qlistwidget. we aren't gonna pass a qstringlist by reference thru all those stack frames even if it might be easier, we're just gonna call setMusicFolders multiple times until the artist list is populated with all the relevant items
       QUrl currentUrl=originalUrl;
@@ -251,6 +258,14 @@ void chumstreamer::on_pushButton_clicked()
       QNetworkReply* getIndexesReply=manager.get(QNetworkRequest(currentUrl));
       connect(getIndexesReply,&QNetworkReply::finished,this,&chumstreamer::addArtists);
     }
+    else
+    {
+      modelBitmask += "0";
+    }
+  }
+  if(modelBitmask!=checkedFolders)
+  {
+    writeSave();
   }
 }
 
@@ -991,6 +1006,19 @@ void chumstreamer::writeSave()
     //loginInfo["volume"]=QString::number(ui->volumeSlider->value());
     loginInfo["volume"]=ui->volumeSlider->value();
     loginInfo["server"]=Server().toString();
+    QString folderBitmask="";
+    for(int counter=0;counter<ui->musicFolderListWidget->count();counter++)
+    {
+      if(ui->musicFolderListWidget->item(counter)->checkState()==Qt::Checked)
+      {
+        folderBitmask+="1";
+      }
+      else{
+        folderBitmask+="0";
+      }
+    }
+    loginInfo["checkedFolders"]=folderBitmask;
+    checkedFolders=folderBitmask;
     if(tmp.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
       //QJsonDocument docToWrite(loginInfo);
@@ -1019,17 +1047,17 @@ bool chumstreamer::applyFromSave()
       Username()=saveData["username"].toString();
       Password()=saveData["password"].toString();
       ui->volumeSlider->setValue(saveData["volume"].toInt());
+      checkedFolders=saveData["checkedFolders"].toString();
       qDebug() << "created QJsonObject from file and applied to main object members";
       return true;
     }
     else
     {
       qDebug() << "couldn't open save file, even though it exists";
-      return false;
     }
   }
   else{
     qDebug() << "save file didn't exist, couldn't apply";
-    return false;
   }
+  return false;
 }

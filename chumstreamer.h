@@ -133,7 +133,7 @@ private:
     void setImage(QString songID);
     void getSongInfo(QString songID);
     void grayOutPlaylist();
-    QString currentAlbumArt=0;
+    QString currentAlbumArt="0";
     bool repeating();
     void toggleRepeating();
     bool random();
@@ -141,6 +141,7 @@ private:
     //QJsonDocument readSave();
     bool applyFromSave();
     bool hasRed();
+    QString checkedFolders;
 };
 
 #endif // CHUMSTREAMER_H
