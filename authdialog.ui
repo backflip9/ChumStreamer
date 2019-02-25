@@ -81,14 +81,14 @@
   <widget class="QLabel" name="serverLabel">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>20</y>
-     <width>47</width>
-     <height>13</height>
+     <x>20</x>
+     <y>10</y>
+     <width>91</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Server</string>
+    <string>Server Address</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="serverEdit">
