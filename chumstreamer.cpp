@@ -918,6 +918,7 @@ bool chumstreamer::repeating()
 
 void chumstreamer::on_volumeSlider_sliderReleased()
 {
+  writeSave();
 }
 
 void chumstreamer::on_randomToggleButton_clicked()
