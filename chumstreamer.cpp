@@ -912,6 +912,7 @@ int chumstreamer::getCurrentPlaylistIndex()
 void chumstreamer::on_repeatToggleButton_clicked()
 {
   toggleRepeating();
+  writeSave();
 }
 
 void chumstreamer::toggleRepeating()
@@ -923,6 +924,19 @@ void chumstreamer::toggleRepeating()
   else
   {
     ui->repeatToggleButton->setText("repeat all");
+  }
+}
+
+//if we can't predict what the repeat button is currently set to
+void chumstreamer::toggleRepeating(bool staticBool)
+{
+  if(staticBool)
+  {
+    ui->repeatToggleButton->setText("repeat all");
+  }
+  else
+  {
+    ui->repeatToggleButton->setText("no repeat");
   }
 }
 
@@ -939,6 +953,7 @@ void chumstreamer::on_volumeSlider_sliderReleased()
 void chumstreamer::on_randomToggleButton_clicked()
 {
   toggleRandom();
+  writeSave();
 }
 bool chumstreamer::random()
 {
@@ -955,6 +970,17 @@ void chumstreamer::toggleRandom()
   }
 }
 
+//if we can't predict what the repeat button is currently set to
+void chumstreamer::toggleRandom(bool staticBool)
+{
+  if(staticBool)
+  {
+    ui->randomToggleButton->setText("random on");
+  }
+  else{
+    ui->randomToggleButton->setText("random off");
+  }
+}
 void chumstreamer::on_clearButton_clicked()
 {
   on_artistListWidget_Clear();
@@ -1003,9 +1029,9 @@ void chumstreamer::writeSave()
     loginInfo["username"]=Username();
     loginInfo["password"]=Password();
     loginInfo["server"]=Server().toString();
-    //loginInfo["volume"]=QString::number(ui->volumeSlider->value());
     loginInfo["volume"]=ui->volumeSlider->value();
-    loginInfo["server"]=Server().toString();
+    loginInfo["random"]=random()?"1":"0";
+    loginInfo["repeating"]=repeating()?"1":"0";
     QString folderBitmask="";
     for(int counter=0;counter<ui->musicFolderListWidget->count();counter++)
     {
@@ -1048,6 +1074,9 @@ bool chumstreamer::applyFromSave()
       Password()=saveData["password"].toString();
       ui->volumeSlider->setValue(saveData["volume"].toInt());
       checkedFolders=saveData["checkedFolders"].toString();
+      //if(saveData["repeating"]=="1"){toggleRepeating(true);}
+      toggleRepeating(saveData["repeating"]=="1");
+      toggleRandom(saveData["random"]=="1");
       qDebug() << "created QJsonObject from file and applied to main object members";
       return true;
     }

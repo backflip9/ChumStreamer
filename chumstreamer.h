@@ -136,8 +136,10 @@ private:
     QString currentAlbumArt="0";
     bool repeating();
     void toggleRepeating();
+    void toggleRepeating(bool);
     bool random();
     void toggleRandom();
+    void toggleRandom(bool);
     //QJsonDocument readSave();
     bool applyFromSave();
     bool hasRed();
