@@ -1,5 +1,5 @@
-#ifndef CHUMSTREAMER_H
-#define CHUMSTREAMER_H
+#ifndef chumstreamer_desktop_H
+#define chumstreamer_desktop_H
 
 #include <QMainWindow>
 #include <QMainWindow>
@@ -19,16 +19,16 @@ class ChumListItem;
 class QDomNode;
 
 namespace Ui {
-class chumstreamer;
+class chumstreamer_desktop;
 }
 
-class chumstreamer : public QMainWindow
+class chumstreamer_desktop : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit chumstreamer(QWidget *parent = nullptr);
-    ~chumstreamer();
+    explicit chumstreamer_desktop(QWidget *parent = nullptr);
+    ~chumstreamer_desktop();
     QUrl& Server(){return server;}
     QString& Username(){return username;}
     QString& Password(){return password;}
@@ -96,7 +96,7 @@ private slots:
     void on_clearButton_clicked();
 
 private:
-    Ui::chumstreamer *ui;
+    Ui::chumstreamer_desktop *ui;
     QNetworkAccessManager manager;
     //QVector<QNetworkReply* > replyVec;
     //QNetworkReply* reply;
@@ -146,4 +146,4 @@ private:
     QString checkedFolders;
 };
 
-#endif // CHUMSTREAMER_H
+#endif // chumstreamer_desktop_H

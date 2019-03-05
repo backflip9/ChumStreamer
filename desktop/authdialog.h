@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QDir>
 
-class chumstreamer;
+class chumstreamer_desktop;
 namespace Ui {
 class authDialog;
 }
@@ -16,7 +16,7 @@ class authDialog : public QDialog
 public:
     explicit authDialog(QWidget *parent = nullptr);
     ~authDialog();
-    void setParentClass(chumstreamer *oneClass);
+    void setParentClass(chumstreamer_desktop *oneClass);
     void setAuthInfo();
     void setTextBoxes();
 
@@ -25,7 +25,7 @@ private slots:
 
 private:
     Ui::authDialog *ui;
-    chumstreamer *parentClass;
+    chumstreamer_desktop *parentClass;
     QString cacheFilePath=QDir::homePath() + "/subping.dat";
 };
 

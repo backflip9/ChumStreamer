@@ -1,6 +1,6 @@
 <ui version="4.0">
- <class>chumstreamer</class>
- <widget class="QMainWindow" name="chumstreamer" >
+ <class>chumstreamer_core</class>
+ <widget class="QMainWindow" name="chumstreamer_core" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>chumstreamer</string>
+   <string>chumstreamer_core</string>
   </property>
   <widget class="QMenuBar" name="menuBar" />
   <widget class="QToolBar" name="mainToolBar" />

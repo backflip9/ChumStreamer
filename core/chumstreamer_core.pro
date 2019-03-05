@@ -1,14 +1,14 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2019-02-15T16:56:18
+# Project created by QtCreator 2019-03-05T10:04:44
 #
 #-------------------------------------------------
 
-QT       += core gui xml multimedia
+QT       += core gui xml network multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = chumstreamer
+TARGET = chumstreamer_core
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -16,9 +16,6 @@ TEMPLATE = app
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-
-# make suppress debug output when we compile in release mode
-CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -29,20 +26,14 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        chumstreamer.cpp \
-    clickablelist.cpp \
-    authdialog.cpp
+#        chumstreamer_core_2.cpp
 
 HEADERS += \
-        chumstreamer.h \
-    musicfolderinfo.h \
-    clickablelist.h \
-    chumlistitem.h \
-    authdialog.h
+#        chumstreamer_core_2.h \
+    musicfolderinfo.h
 
 FORMS += \
-        chumstreamer.ui \
-    authdialog.ui
+        chumstreamer_core.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
