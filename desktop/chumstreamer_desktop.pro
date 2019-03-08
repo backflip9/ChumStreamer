@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = chumstreamer_desktop
 TEMPLATE = app
 INCLUDEPATH += .
-include(../chumstreamer_core/chumstreamer_core.pri)
+include($$PWD/../chumstreamer_core/chumstreamer_core.pri)
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings

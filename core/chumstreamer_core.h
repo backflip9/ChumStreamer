@@ -59,7 +59,8 @@ private slots:
     void getMusicFolders();
     virtual void displayDir();//i think we'll need to do some weird voodoo magic on android to get the list of folders to show up
     void displayImage();
-    virtual void imageFromPixmap(QPixmap input){return;}
+    //virtual void imageFromPixmap(QPixmap input){return;}
+    virtual void imageFromPixmap(QPixmap input)=0;//pure virtual
 
     //void on_artistListWidget_itemDoubleClicked(QListWidgetItem *item);
 
@@ -72,8 +73,7 @@ private slots:
     //void on_playPauseButton_clicked();
 
     //void on_pushButton_2_clicked();
-    virtual void setSongInfo();
-
+    virtual void setSongInfo()=0;//pure virtual
 
     //void on_artistListWidget_currentRowChanged(int currentRow);
 
@@ -131,7 +131,7 @@ private:
     QUrl buildQueryString(QString path="");
     void setMusicFolders();
     bool handleNetworkError(QNetworkReply* reply,QString funcName="");
-    void songInfoDisplay(bool hide);
+    virtual void songInfoDisplay(bool hide)=0;//pure virtual
     QStringList artistList;
     QVector<musicFolderInfo> musicFolderVec;
     void playlistAddFromChumListItem(ChumListItem* oneChum,bool prepend);
@@ -165,7 +165,7 @@ private:
     virtual void toggleRandom();
     virtual void toggleRandom(bool);
     //QJsonDocument readSave();
-    virtual bool applyFromSave();//desktop has a volume parameter but mobile won't
+    bool applyFromSave();//desktop has a volume parameter but mobile won't
     bool hasRed();
     QString checkedFolders;
 

@@ -161,6 +161,7 @@ void chumstreamer_core::setMusicFolders()
   connect(musicFoldersReply,&QNetworkReply::finished,this,&chumstreamer_core::getMusicFolders);
 }
 
+/*
 void chumstreamer_core::on_pushButton_clicked()
 {
   qDebug() << "button clicked";
@@ -190,8 +191,6 @@ void chumstreamer_core::on_pushButton_clicked()
       //call setMusicFolders to add them to the qlistwidget. we aren't gonna pass a qstringlist by reference thru all those stack frames even if it might be easier, we're just gonna call setMusicFolders multiple times until the artist list is populated with all the relevant items
       QUrl currentUrl=originalUrl;
       QUrlQuery currentQuery(currentUrl.query());
-      //this isn't working atm
-      //currentQuery.addQueryItem(ui->musicFolderListWidget->item(counter)->getArtistID());
       currentQuery.addQueryItem("musicFolderId",dynamic_cast<ChumListItem *>(ui->musicFolderListWidget->item(counter))->info->id);
       currentUrl.setQuery(currentQuery);
       qDebug("query to be sent to addArtists():");
@@ -211,6 +210,7 @@ void chumstreamer_core::on_pushButton_clicked()
     writeSave();
   }
 }
+*/
 
 void chumstreamer_core::displayRoot(const QString& bitmask)
 {
@@ -514,11 +514,13 @@ void chumstreamer_core::bufferStream()
 
 void chumstreamer_core::notifySongEnd()
 {
+  //a cleaner, more agnostic way to do this. we could just refer to the member var
   QMediaPlayer* oneMedia=qobject_cast<QMediaPlayer* >(sender());
   if(oneMedia->mediaStatus()==QMediaPlayer::EndOfMedia)
   {
     qDebug() << "media has ended!";
-    return on_nextTrackButton_clicked();
+    //return on_nextTrackButton_clicked();
+    return playNext();
     //if(chooseNext()){return streamSong();}
   }
   else
@@ -657,7 +659,7 @@ void chumstreamer_core::getSongInfo(QString songID)
   connect(songInfoReply,&QNetworkReply::finished,this,&chumstreamer_core::setSongInfo);
 }
 
-void chumstreamer_core::setSongInfo()//virtual
+void chumstreamer_core::setSongInfo()//pure virtual
 {
   /*
   //if(player->state()!=QMediaPlayer::StoppedState){return;}
@@ -845,7 +847,6 @@ void chumstreamer_core::playlistAddFromNode(QDomNode oneDir)
   addToPlaylistFromSlot(latestPrepend,tempSong);
 }
 
-//append a song to the playlist (will add folder support later)
 void chumstreamer_core::on_artistListWidget_playlistAppend()
 {
   latestPrepend=false;
@@ -855,12 +856,6 @@ void chumstreamer_core::on_artistListWidget_playlistAppend()
 void chumstreamer_core::on_artistListWidget_playlistPrepend()
 {
   latestPrepend=true;
-  //this is handled in playlistAddFromChumListItem
-  /*
-  bool prepend=true;
-  if(ui->playlistListWidget->count()==0){prepend=false;}
-  addToPlaylistFromSlot(prepend);
-  */
   addToPlaylistFromSlot(true);
 }
 

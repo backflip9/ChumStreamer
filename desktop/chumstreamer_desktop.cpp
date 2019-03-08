@@ -20,15 +20,16 @@
 #include "chumlistitem.h"
 #include "authdialog.h"
 //#include "md5.cpp";
+#include "../chumstreamer_core/chumstreamer_core.h"
 #include "chumstreamer_desktop.h"
 #include "ui_chumstreamer_desktop.h"
 #include<time.h>
 
 chumstreamer_desktop::chumstreamer_desktop(QWidget *parent) :
-    QMainWindow(parent),
+    chumstreamer_core(parent),
     ui(new Ui::chumstreamer_desktop)
 {
-  srand(time(NULL));
+  //srand(time(NULL));
   ui->setupUi(this);
   filePath = QDir::homePath() + "/Documents/tmpDownload.xml";
   cacheFilePath=QDir::homePath() + "/chumstreamer_desktop.json";
@@ -44,7 +45,6 @@ chumstreamer_desktop::chumstreamer_desktop(QWidget *parent) :
   songInfoDisplay(false);
   ui->imageLabel->hide();
   player->setVolume(ui->volumeSlider->value());
-  qDebug() << "something written in vim\n";
   //copypaste from authDialog class
   //populate the members with auth info from the dat file, if it exists
   if(applyFromSave())
@@ -83,28 +83,7 @@ chumstreamer_desktop::~chumstreamer_desktop()
 }
 
 
-QUrl chumstreamer_desktop::buildQueryString(QString page)
-{
-  QUrl result(server);
-  if(page!="")
-  {
-    result.setPath("/rest/" + page);
-  }
-  QUrlQuery myQuery;
-  myQuery.addQueryItem("u",Username());
-  myQuery.addQueryItem("p",Password());
-  myQuery.addQueryItem("c","chumstreamer_desktop");
-  myQuery.addQueryItem("v","1.15.0");
-  result.setQuery(myQuery);
-  return result;
-}
 /*
-chumstreamer_desktop::~chumstreamer_desktop()
-{
-    delete ui;
-}
-*/
-
 void chumstreamer_desktop::addArtists()
 {
   QNetworkReply* oneReply=qobject_cast<QNetworkReply* >(sender());
@@ -152,7 +131,9 @@ void chumstreamer_desktop::addArtists()
   }
   ui->artistListWidget->setFocus(Qt::TabFocusReason);
 }
+*/
 
+/*
 void chumstreamer_desktop::getMusicFolders()
 {
   qDebug() << "get music folders!!";
@@ -195,13 +176,16 @@ void chumstreamer_desktop::getMusicFolders()
   }
   on_pushButton_clicked();
 }
+*/
 
+/*
 void chumstreamer_desktop::setMusicFolders()
 {
   //initialize a network request and call getMusicFolders to change the values in the combobox based on the auth details entered in the authDialog
   QNetworkReply* musicFoldersReply=manager.get(QNetworkRequest(buildQueryString("getMusicFolders")));
   connect(musicFoldersReply,&QNetworkReply::finished,this,&chumstreamer_desktop::getMusicFolders);
 }
+*/
 
 
 void chumstreamer_desktop::on_configureButton_clicked()
@@ -219,8 +203,21 @@ void chumstreamer_desktop::on_configureButton_clicked()
   qDebug() << password;
 }
 
+
+
 void chumstreamer_desktop::on_pushButton_clicked()
 {
+  QString modelBitmask="";
+  for(int counter=0;counter<ui->musicFolderListWidget->count();counter++)
+  {
+    if(ui->musicFolderListWidget->item(counter)->checkState()==Qt::Checked)
+    {
+      modelBitmask += "1";
+    }
+    else{modelBitmask+="0";}
+  }
+  displayRoot(modelBitmask);
+  /*
   qDebug() << "button clicked";
 
   //hide things that aren't relevant anymore
@@ -267,8 +264,10 @@ void chumstreamer_desktop::on_pushButton_clicked()
   {
     writeSave();
   }
+  */
 }
 
+/*
 void chumstreamer_desktop::setDir(const QString& dir)
 {
   QUrl currentUrl = buildQueryString("getMusicDirectory");
@@ -313,21 +312,13 @@ void chumstreamer_desktop::displayDir()
     if(!grabAlbumArt && !oneDir.attributes().namedItem("coverArt").isNull() && oneDir.attributes().namedItem("isDir").nodeValue()=="false" && player->state()==QMediaPlayer::StoppedState)
     {
       setImage(oneDir.attributes().namedItem("coverArt").nodeValue());
-      /*
-      QUrl imageUrl=buildQueryString("getCoverArt");
-      QUrlQuery imageQuery(imageUrl.query());
-      imageQuery.addQueryItem("id",oneDir.attributes().namedItem("coverArt").nodeValue());
-      imageQuery.addQueryItem("size","190");
-      imageUrl.setQuery(imageQuery);
-      //QNetworkRequest imageRequest(imageUrl);
-      QNetworkReply* imageReply=manager.get(QNetworkRequest(imageUrl));
-      connect(imageReply,&QNetworkReply::finished,this,&chumstreamer_desktop::displayImage);
-      */
       grabAlbumArt=true;
     }
   }
 }
+*/
 
+/*
 void chumstreamer_desktop::setImage(QString songID)
 {
   if(songID==currentAlbumArt){qDebug()<<"songID was equal to currentAlbumArt";return;}
@@ -343,7 +334,10 @@ void chumstreamer_desktop::setImage(QString songID)
   QNetworkReply* imageReply=manager.get(QNetworkRequest(imageUrl));
   connect(imageReply,&QNetworkReply::finished,this,&chumstreamer_desktop::displayImage);
 }
+*/
 
+//this is shorter and calls a virtual function now
+/*
 void chumstreamer_desktop::displayImage()
 {
   QNetworkReply* oneReply=qobject_cast<QNetworkReply* >(sender());
@@ -356,6 +350,7 @@ void chumstreamer_desktop::displayImage()
   ui->imageLabel->setPixmap(oneImage);
   ui->imageLabel->show();
 }
+*/
 
 
 
@@ -373,6 +368,7 @@ void chumstreamer_desktop::on_nextButton_clicked()
 */
 
 
+/*
 bool chumstreamer_desktop::handleNetworkError(QNetworkReply* reply,QString funcName)
 {
   //to avoid copypaste
@@ -389,9 +385,12 @@ bool chumstreamer_desktop::handleNetworkError(QNetworkReply* reply,QString funcN
   }
   return false;
 }
+*/
 
-void chumstreamer_desktop::on_artistListWidget_itemDoubleClicked(QListWidgetItem *item)
+void chumstreamer_desktop::on_artistListWidget_itemDoubleClicked(QListWidgetItem* item)
 {
+  nextDir(item);
+  /*
   //gets the child dirs from whatever's currently being displayed in artistListWidget
   //old version without chumlistitem
   if(dynamic_cast<ChumListItem* >(item)->info->isSong)
@@ -404,8 +403,10 @@ void chumstreamer_desktop::on_artistListWidget_itemDoubleClicked(QListWidgetItem
   setDir(artistID);
   ui->pwdLabel->setText(item->text());
   ui->pwdLabel->show();
+  */
 }
 
+/*
 void chumstreamer_desktop::on_backButton_clicked()
 {
   if(prevDirIDVec.size()==1||prevDirIDVec.size()==2){on_pushButton_clicked();return;}
@@ -413,6 +414,7 @@ void chumstreamer_desktop::on_backButton_clicked()
   ui->pwdLabel->setText(prevDirIDVec.at(1).name);
   prevDirIDVec.pop_front();
 }
+*/
 
 //void chumstreamer_desktop::keyPressTest(QKeyEvent* oneKey)
 void chumstreamer_desktop::keyPressEvent(QKeyEvent* oneKey)
@@ -484,6 +486,7 @@ void chumstreamer_desktop::on_playButton_clicked()
   }
 }
 
+/*
 void chumstreamer_desktop::streamSong()
 {
   ui->playlistListWidget->item(getCurrentPlaylistIndex())->setForeground(Qt::red);
@@ -501,6 +504,7 @@ void chumstreamer_desktop::streamSong()
   getSongInfo(songID);
   connect(player,&QMediaPlayer::mediaStatusChanged,this,&chumstreamer_desktop::notifySongEnd);
 }
+*/
 
 
 //i'll try to do this later
@@ -527,6 +531,7 @@ void chumstreamer_desktop::streamSongQIO()
 }
 */
 
+/*
 void chumstreamer_desktop::bufferStream()
 {
   QNetworkReply* oneReply=qobject_cast<QNetworkReply* >(sender());
@@ -535,6 +540,7 @@ void chumstreamer_desktop::bufferStream()
   player->setMedia(blankContent,oneReply);
   if(player->state()!=QMediaPlayer::PlayingState){player->play();}
 }
+*/
 
 void chumstreamer_desktop::notifySongEnd()
 {
@@ -551,6 +557,7 @@ void chumstreamer_desktop::notifySongEnd()
   }
 }
 
+/*
 bool chumstreamer_desktop::chooseNext()
 {
   if(ui->playlistListWidget->count()==0)
@@ -586,6 +593,7 @@ bool chumstreamer_desktop::chooseNext()
     return false;
   }
 }
+*/
 
 
 void chumstreamer_desktop::on_playPauseButton_clicked()
@@ -600,6 +608,7 @@ void chumstreamer_desktop::on_pushButton_2_clicked()
   grayOutPlaylist();
 }
 
+/*
 void chumstreamer_desktop::grayOutPlaylist()
 {
   for(int i=0;i<ui->playlistListWidget->count();i++)
@@ -607,6 +616,7 @@ void chumstreamer_desktop::grayOutPlaylist()
     ui->playlistListWidget->item(i)->setForeground(Qt::lightGray);
   }
 }
+*/
 
 
 void chumstreamer_desktop::on_artistListWidget_currentRowChanged(int currentRow)
@@ -620,6 +630,7 @@ void chumstreamer_desktop::on_artistListWidget_currentRowChanged(int currentRow)
   getSongInfo(dynamic_cast<ChumListItem *>(ui->artistListWidget->item(currentRow))->info->id);
 }
 
+/*
 void chumstreamer_desktop::getSongInfo(QString songID)
 {
   QUrl songRequest=buildQueryString("getSong");
@@ -631,6 +642,7 @@ void chumstreamer_desktop::getSongInfo(QString songID)
   QNetworkReply* songInfoReply=manager.get(getSongInfoRequest);
   connect(songInfoReply,&QNetworkReply::finished,this,&chumstreamer_desktop::setSongInfo);
 }
+*/
 
 void chumstreamer_desktop::setSongInfo()
 {
@@ -682,6 +694,7 @@ void chumstreamer_desktop::on_artistListWidget_Clicked()
 }
 
 
+/*
 //optionalChum is only going to be passed to this function when it's being called by playlistAddRecursive()
 void chumstreamer_desktop::addToPlaylistFromSlot(bool prepend,ChumListItem* optionalChum)
 {
@@ -695,56 +708,16 @@ void chumstreamer_desktop::addToPlaylistFromSlot(bool prepend,ChumListItem* opti
     {
       playlistAddFromChumListItem(dynamic_cast<ChumListItem *>(ui->artistListWidget->currentItem()),prepend);
       qDebug() << "two";
-      /*
-      if(dynamic_cast<ChumListItem *>(ui->artistListWidget->currentItem())->info->isSong)
-      {
-        qDebug() << "two";
-        //and only if that item doesn't already exist in the playlist
-        if(ui->playlistListWidget->findItems(ui->artistListWidget->currentItem()->text(),Qt::MatchExactly).size()==0)
-        {
-          qDebug() << "three";
-          ChumListItem* newSong=new ChumListItem(*dynamic_cast<ChumListItem *>(ui->artistListWidget->currentItem()));
-          qDebug() << "clickableList: built chumlistitem for adding to playlist";
-          if(prepend)
-          {
-            ui->playlistListWidget->insertItem(0,newSong);
-            qDebug()<<"addToPlaylistFromSlot: prepended to playlist";
-          }
-          else{
-            ui->playlistListWidget->addItem(newSong);
-            qDebug()<<"addToPlaylistFromSlot: appended "<<dynamic_cast<ChumListItem *>(ui->artistListWidget->currentItem())->info->name << "to playlist";
-          }
-        }
-      }
-      else
-      { //if not, recursively add all the children of the directory
-        firstRecursiveRequest(dynamic_cast<ChumListItem *>(ui->artistListWidget->currentItem())->info->id);
-      }
-      */
     } //there's no else for this cause we have nothing to do if no items are highlighted and the user presses A or E
   }
   else
   {
     playlistAddFromChumListItem(optionalChum,prepend);
-    /*
-    if(optionalChum->info->isSong)
-    {
-      if(latestPrepend && ui->playlistListWidget->count()!=0)
-      {
-        ui->playlistListWidget->insertItem(0,optionalChum);
-      }
-      else{
-        ui->playlistListWidget->addItem(optionalChum);
-      }
-    }
-    else
-    {
-      firstRecursiveRequest(optionalChum->info->id);
-    }
-    */
   }
 }
+*/
 
+/*
 void chumstreamer_desktop::playlistAddFromChumListItem(ChumListItem* oneChum,bool prepend)
 {
   if(oneChum->info->isSong)
@@ -773,8 +746,10 @@ void chumstreamer_desktop::playlistAddFromChumListItem(ChumListItem* oneChum,boo
     firstRecursiveRequest(oneChum->info->id);
   }
 }
+*/
 
 
+/*
 void chumstreamer_desktop::firstRecursiveRequest(QString id)
 {
   QUrl firstUrl(buildQueryString("getMusicDirectory"));
@@ -786,7 +761,9 @@ void chumstreamer_desktop::firstRecursiveRequest(QString id)
   QNetworkReply* firstCallReply=manager.get(firstCallRequest);
   connect(firstCallReply,&QNetworkReply::finished,this,&chumstreamer_desktop::playlistAddRecursive);
 }
+*/
 
+/*
 void chumstreamer_desktop::playlistAddRecursive()
 {
   QNetworkReply* oneReply=qobject_cast<QNetworkReply* >(sender());
@@ -821,32 +798,32 @@ void chumstreamer_desktop::playlistAddRecursive()
     }
   }
 }
+*/
 
+/*
 void chumstreamer_desktop::playlistAddFromNode(QDomNode oneDir)
 {
   //at first, this code only ran if the node was a song, but then i realized that addToPlaylistFromSlot can just handle either case
   ChumListItem* tempSong=new ChumListItem(oneDir.attributes().namedItem("title").nodeValue(),oneDir.attributes().namedItem("id").nodeValue(),oneDir.attributes().namedItem("isDir").nodeValue()=="false");
   addToPlaylistFromSlot(latestPrepend,tempSong);
 }
+*/
 
-//append a song to the playlist (will add folder support later)
+/*
 void chumstreamer_desktop::on_artistListWidget_playlistAppend()
 {
   latestPrepend=false;
   addToPlaylistFromSlot(false);
 }
+*/
 
+/*
 void chumstreamer_desktop::on_artistListWidget_playlistPrepend()
 {
   latestPrepend=true;
-  //this is handled in playlistAddFromChumListItem
-  /*
-  bool prepend=true;
-  if(ui->playlistListWidget->count()==0){prepend=false;}
-  addToPlaylistFromSlot(prepend);
-  */
   addToPlaylistFromSlot(true);
 }
+*/
 
 void chumstreamer_desktop::on_artistListWidget_ReturnKey()
 {
@@ -879,6 +856,7 @@ void chumstreamer_desktop::on_artistListWidget_Clear()
   ui->playlistListWidget->clear();
 }
 
+/*
 int chumstreamer_desktop::getCurrentPlaylistIndex()
 {
   //case 1: there's already a song that's red, so we'll return that
@@ -908,6 +886,7 @@ int chumstreamer_desktop::getCurrentPlaylistIndex()
   //else the playlist is empty or something
   return 0;
 }
+*/
 
 void chumstreamer_desktop::on_repeatToggleButton_clicked()
 {
@@ -917,19 +896,21 @@ void chumstreamer_desktop::on_repeatToggleButton_clicked()
 
 void chumstreamer_desktop::toggleRepeating()
 {
+  chumstreamer_core::toggleRepeating(staticBool);
   if(repeating())
   {
-    ui->repeatToggleButton->setText("no repeat");
+    ui->repeatToggleButton->setText("repeat all");
   }
   else
   {
-    ui->repeatToggleButton->setText("repeat all");
+    ui->repeatToggleButton->setText("no repeat");
   }
 }
 
 //if we can't predict what the repeat button is currently set to
 void chumstreamer_desktop::toggleRepeating(bool staticBool)
 {
+  chumstreamer_core::toggleRepeating(staticBool);
   if(staticBool)
   {
     ui->repeatToggleButton->setText("repeat all");
@@ -938,11 +919,6 @@ void chumstreamer_desktop::toggleRepeating(bool staticBool)
   {
     ui->repeatToggleButton->setText("no repeat");
   }
-}
-
-bool chumstreamer_desktop::repeating()
-{
-  return ui->repeatToggleButton->text()=="repeat all";
 }
 
 void chumstreamer_desktop::on_volumeSlider_sliderReleased()
@@ -961,18 +937,21 @@ bool chumstreamer_desktop::random()
 }
 void chumstreamer_desktop::toggleRandom()
 {
+  chumstreamer_core::toggleRandom();
   if(random())
   {
-    ui->randomToggleButton->setText("random off");
-  }
-  else{
     ui->randomToggleButton->setText("random on");
   }
+  else{
+    ui->randomToggleButton->setText("random off");
+  }
+
 }
 
 //if we can't predict what the repeat button is currently set to
 void chumstreamer_desktop::toggleRandom(bool staticBool)
 {
+  chumstreamer_core::toggleRandom(staticBool);
   if(staticBool)
   {
     ui->randomToggleButton->setText("random on");
@@ -981,11 +960,13 @@ void chumstreamer_desktop::toggleRandom(bool staticBool)
     ui->randomToggleButton->setText("random off");
   }
 }
+
 void chumstreamer_desktop::on_clearButton_clicked()
 {
   on_artistListWidget_Clear();
 }
 
+/*
 bool chumstreamer_desktop::hasRed()
 {
   for(int i=0;i<ui->playlistListWidget->count();i++)
@@ -994,99 +975,4 @@ bool chumstreamer_desktop::hasRed()
   }
   return false;
 }
-void chumstreamer_desktop::writeSave()
-{
-  QFile tmp(cacheFilePath);
-  /*
-  if(tmp.exists())
-  {
-    if(tmp.open(QIODevice::ReadWrite | QIODevice::Truncate))
-    {
-      QJsonDocument currentDoc;
-      currentDoc.fromJson(tmp.readAll());
-      tmp.close();
-    }
-    else
-    {
-      qDebug() << "couldn't open save file, even though it exists";
-      return;
-    }
-    currentDoc.
-  }
-  */
-  if(false){}
-  else
-  {
-    qDebug() << "creating json save file...";
-    QJsonObject loginInfo;
-    /*
-    loginInfo.insert("username",Username());
-    loginInfo.insert("password",Password());
-    loginInfo.insert("server",Server().toString());
-    loginInfo.insert("volume",QString::number(ui->volumeSlider->value()));
-    loginInfo.insert("server",Server().toString());
-    */
-    loginInfo["username"]=Username();
-    loginInfo["password"]=Password();
-    loginInfo["server"]=Server().toString();
-    loginInfo["volume"]=ui->volumeSlider->value();
-    loginInfo["random"]=random()?"1":"0";
-    loginInfo["repeating"]=repeating()?"1":"0";
-    QString folderBitmask="";
-    for(int counter=0;counter<ui->musicFolderListWidget->count();counter++)
-    {
-      if(ui->musicFolderListWidget->item(counter)->checkState()==Qt::Checked)
-      {
-        folderBitmask+="1";
-      }
-      else{
-        folderBitmask+="0";
-      }
-    }
-    loginInfo["checkedFolders"]=folderBitmask;
-    checkedFolders=folderBitmask;
-    if(tmp.open(QIODevice::WriteOnly | QIODevice::Truncate))
-    {
-      //QJsonDocument docToWrite(loginInfo);
-      tmp.write(QJsonDocument(loginInfo).toJson());
-      tmp.close();
-      qDebug() << "wrote to save file: " << cacheFilePath;
-    }
-    else{
-      qDebug() << "couldn't open save file, even though it doesn't exist";
-    }
-  }
-}
-
-bool chumstreamer_desktop::applyFromSave()
-{
-  QFile saveFile(cacheFilePath);
-  if(saveFile.exists())
-  {
-    if(saveFile.open(QIODevice::ReadOnly))
-    {
-      QJsonObject saveData(QJsonDocument().fromJson(saveFile.readAll()).object());
-      QJsonDocument currentDoc;
-      currentDoc.fromJson(saveFile.readAll());
-      saveFile.close();
-      Server()=saveData["server"].toString();
-      Username()=saveData["username"].toString();
-      Password()=saveData["password"].toString();
-      ui->volumeSlider->setValue(saveData["volume"].toInt());
-      checkedFolders=saveData["checkedFolders"].toString();
-      //if(saveData["repeating"]=="1"){toggleRepeating(true);}
-      toggleRepeating(saveData["repeating"]=="1");
-      toggleRandom(saveData["random"]=="1");
-      qDebug() << "created QJsonObject from file and applied to main object members";
-      return true;
-    }
-    else
-    {
-      qDebug() << "couldn't open save file, even though it exists";
-    }
-  }
-  else{
-    qDebug() << "save file didn't exist, couldn't apply";
-  }
-  return false;
-}
+*/

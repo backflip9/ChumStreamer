@@ -22,7 +22,7 @@ namespace Ui {
 class chumstreamer_desktop;
 }
 
-class chumstreamer_desktop : public QMainWindow
+class chumstreamer_desktop : public chumstreamer_core
 {
     Q_OBJECT
 
@@ -32,22 +32,22 @@ public:
     QUrl& Server(){return server;}
     QString& Username(){return username;}
     QString& Password(){return password;}
-    void setDir(const QString& dir);
+    //void setDir(const QString& dir);
     //public for authdialog to use
-    void writeSave();
+    //void writeSave();
 
 private slots:
     //buttons:
     void on_pushButton_clicked();
-    void bufferStream();
-    void notifySongEnd();
+    //void bufferStream();
+    //void notifySongEnd();
     //void playFile();
     void on_configureButton_clicked();
     //void on_nextButton_clicked();
     //helpers:
-    void addArtists();
-    void getMusicFolders();
-    void displayDir();
+    //void addArtists();
+    //void getMusicFolders();
+    //void displayDir();//this is void in the parent class but i don't think we need the keyword in this child class?
     void displayImage();
 
     void on_artistListWidget_itemDoubleClicked(QListWidgetItem *item);
@@ -85,7 +85,7 @@ private slots:
 
     void on_nextTrackButton_clicked();
 
-    void playlistAddRecursive();
+    //void playlistAddRecursive();
 
     void on_artistListWidget_Clear();
 
@@ -106,13 +106,12 @@ private:
     QString username="";
     QString password="";
     QString filePath;
-    QUrl buildQueryString(QString path="");
-    void setMusicFolders();
-    bool handleNetworkError(QNetworkReply* reply,QString funcName="");
+    //void setMusicFolders();
+    //bool handleNetworkError(QNetworkReply* reply,QString funcName="");
     void songInfoDisplay(bool hide);
     QStringList artistList;
     QVector<musicFolderInfo> musicFolderVec;
-    void playlistAddFromChumListItem(ChumListItem* oneChum,bool prepend);
+    //void playlistAddFromChumListItem(ChumListItem* oneChum,bool prepend);
     QVector<musicFolderInfo> prevDirIDVec;
     void keyPressEvent(QKeyEvent*);
     void mouseReleaseEvent(QMouseEvent*);
@@ -122,28 +121,30 @@ private:
     QByteArray currentSong;
     const int DEFAULT_VOLUME=20;
     int getCurrentPlaylistIndex();
-    void streamSong();
-    bool chooseNext();
+    //void streamSong();
+    //bool chooseNext();
     //stores whether the user last pressed E or A, since we're going to be adding playlist items in slot functions that i don't know how to pass args to
     bool latestPrepend=false;
     //will work on this later
     //void streamSongQIO();
     void firstRecursiveRequest(QString id);
-    void playlistAddFromNode(QDomNode oneDir);
+    //void playlistAddFromNode(QDomNode oneDir);
     void setImage(QString songID);
-    void getSongInfo(QString songID);
-    void grayOutPlaylist();
+    //void getSongInfo(QString songID);
+    //void grayOutPlaylist();
     QString currentAlbumArt="0";
-    bool repeating();
-    void toggleRepeating();
-    void toggleRepeating(bool);
-    bool random();
-    void toggleRandom();
-    void toggleRandom(bool);
+    //bool repeating();
+    void toggleRepeating();//virtual
+    void toggleRepeating(bool);//virtual
+    //bool random();
+    void toggleRandom();//virtual
+    void toggleRandom(bool);//virtual
     //QJsonDocument readSave();
-    bool applyFromSave();
+    //bool applyFromSave();
+    /*
     bool hasRed();
     QString checkedFolders;
+    */
 };
 
 #endif // chumstreamer_desktop_H
