@@ -1,19 +1,22 @@
+#include "chumlistitem.h"
 #include "modellist.h"
+#include <QList>
 
-modelList::modelList(){}
 void modelList::insert(int index,const ChumListItem* value)
 {
+  ChumListItem* ret=new ChumListItem(*value);
   if(candy.size()==0 || candy.size()<=index)
   {
-    candy.append(value);
+    candy.append(ret);
   }
-  candy.insert(index,value);
-  emit listChanged(value,index);
+  candy.insert(index,ret);
+  emit listChanged(ret,index);
 }
 void modelList::append(const ChumListItem* value)
 {
-  candy.append(value);
-  emit listChanged(value);
+  ChumListItem* ret=new ChumListItem(*value);
+  candy.append(ret);
+  emit listChanged(ret);
 }
 
 bool modelList::find(const QString& needle)
