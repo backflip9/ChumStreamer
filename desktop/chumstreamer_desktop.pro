@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = chumstreamer_desktop
 TEMPLATE = app
 INCLUDEPATH += .
-include($$PWD/../chumstreamer_core/chumstreamer_core.pri)
+#include(../core/chumstreamer_core.pri)
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -30,23 +30,30 @@ CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 CONFIG += c++11
 
 SOURCES += \
-        main.cpp \
-        chumstreamer_desktop.cpp \
+    main.cpp \
+    chumstreamer_desktop.cpp \
     clickablelist.cpp \
-    authdialog.cpp
+    authdialog.cpp \
+    ../core/modellist.cpp \
+    ../core/chumstreamer_core.cpp \
+
 
 HEADERS += \
-        chumstreamer_desktop.h \
-    #musicfolderinfo.h \
+    chumstreamer_desktop.h \
     clickablelist.h \
-    chumlistitem.h \
-    authdialog.h
+    authdialog.h \
+    ../core/chumlistitem.h \
+    ../core/musicfolderinfo.h \
+    ../core/chumstreamer_core.h \
+    ../core/modellist.h
 
 FORMS += \
-        chumstreamer_desktop.ui \
+    chumstreamer_desktop.ui \
     authdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES +=
