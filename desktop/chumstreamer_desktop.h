@@ -6,7 +6,7 @@
 #include<QtNetwork/QNetworkAccessManager>
 #include<QVector>
 #include<QMediaPlayer>
-#include "musicfolderinfo.h"
+#include "../core/chumstreamer_core.h"
 
 //forward declarations
 class QNetworkReply;
@@ -40,7 +40,7 @@ private slots:
     //buttons:
     void on_pushButton_clicked();
     //void bufferStream();
-    //void notifySongEnd();
+    void notifySongEnd();
     //void playFile();
     void on_configureButton_clicked();
     //void on_nextButton_clicked();
@@ -48,7 +48,7 @@ private slots:
     //void addArtists();
     //void getMusicFolders();
     //void displayDir();//this is void in the parent class but i don't think we need the keyword in this child class?
-    void displayImage();
+    //void displayImage();//this class uses imageFromPixmap now
 
     void on_artistListWidget_itemDoubleClicked(QListWidgetItem *item);
 
@@ -139,6 +139,7 @@ private:
     //bool random();
     void toggleRandom();//virtual
     void toggleRandom(bool);//virtual
+    void imageFromPixmap(QPixmap oneImage);
     //QJsonDocument readSave();
     //bool applyFromSave();
     /*

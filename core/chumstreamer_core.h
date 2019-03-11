@@ -19,18 +19,19 @@ class QByteArray;
 class QMediaPlayer;
 class ChumListItem;
 class QDomNode;
-class QList;
+//class QList;
 
+/*
 namespace Ui {
 class chumstreamer_core;
 }
+*/
 
 class chumstreamer_core : public QMainWindow
 {
-    Q_OBJECT
+    //Q_OBJECT
 
 public:
-    //TODO: look at every function in chumstreamer_core.cpp again and determine whether it's untouched, virtual, or destop-specific, or if its parameters changed. then do the same for chumstreamer_desktop.cpp
     explicit chumstreamer_core(QWidget *parent = nullptr);
     ~chumstreamer_core();
     QUrl& Server(){return server;}
@@ -49,7 +50,7 @@ signals:
 private slots:
     //buttons:
     //void on_pushButton_clicked();
-    //void bufferStream();
+    void bufferStream();
     void notifySongEnd();
     //void playFile();
     //void on_configureButton_clicked();
@@ -110,7 +111,7 @@ private slots:
 
     void on_clearButton_clicked();
 
-private:
+protected:
     //Ui::chumstreamer_core *ui;
     QNetworkAccessManager manager;
     /*
@@ -120,6 +121,7 @@ private:
     modelList directoryModel;
     modelList artistModel;
     modelList playlistModel;
+    //virtual void show(){QMainWindow::show();}
     //QVector<QNetworkReply* > replyVec;
     //QNetworkReply* reply;
     QString cacheFilePath=QDir::homePath() + "/chumstreamer_core.json";
@@ -132,13 +134,13 @@ private:
     void setMusicFolders();
     bool handleNetworkError(QNetworkReply* reply,QString funcName="");
     virtual void songInfoDisplay(bool hide)=0;//pure virtual
+    void playNext();
     QStringList artistList;
     QVector<musicFolderInfo> musicFolderVec;
     void playlistAddFromChumListItem(ChumListItem* oneChum,bool prepend);
     QVector<musicFolderInfo> prevDirIDVec;
-    void keyPressEvent(QKeyEvent*);
-    void mouseReleaseEvent(QMouseEvent*);
-    //void addToPlaylistFromSlot(bool prepend,ChumListItem optionalChum=NULL);
+    virtual void keyPressEvent(QKeyEvent*)=0;//pure virtual
+    virtual void mouseReleaseEvent(QMouseEvent*)=0;//pure virtual
     void addToPlaylistFromSlot(bool prepend,ChumListItem* optionalChum=NULL);
     QMediaPlayer* player = new QMediaPlayer;
     QByteArray currentSong;
@@ -161,15 +163,19 @@ private:
     virtual void toggleRepeating();
     virtual void toggleRepeating(bool);
     bool randomEnabled=false;
-    bool random();
     virtual void toggleRandom();
     virtual void toggleRandom(bool);
     //QJsonDocument readSave();
-    bool applyFromSave();//desktop has a volume parameter but mobile won't
+    bool applyFromSave();
+    //virtual bool applyFromSave();//desktop has a volume parameter but mobile won't
     bool hasRed();
     QString checkedFolders;
-
+    //void displayRoot(const QString& bitmask);
+    void displayRoot();
     void clearPlaylist();
+    bool random();
+    void goBack();
+    void stop();
     virtual void nextDir(QListWidgetItem *item);//to change ui things after the fact. the parent function will be called in the child implementation
 };
 

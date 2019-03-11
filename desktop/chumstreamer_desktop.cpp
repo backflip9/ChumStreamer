@@ -17,10 +17,10 @@
 #include<QJsonObject>
 #include<QJsonDocument>
 #include<algorithm>
-#include "chumlistitem.h"
+#include "../core/chumlistitem.h"
 #include "authdialog.h"
 //#include "md5.cpp";
-#include "../chumstreamer_core/chumstreamer_core.h"
+#include "../core/chumstreamer_core.h"
 #include "chumstreamer_desktop.h"
 #include "ui_chumstreamer_desktop.h"
 #include<time.h>
@@ -47,7 +47,7 @@ chumstreamer_desktop::chumstreamer_desktop(QWidget *parent) :
   player->setVolume(ui->volumeSlider->value());
   //copypaste from authDialog class
   //populate the members with auth info from the dat file, if it exists
-  if(applyFromSave())
+  if(chumstreamer_core::applyFromSave())
   {
     setMusicFolders();
   }
@@ -207,6 +207,7 @@ void chumstreamer_desktop::on_configureButton_clicked()
 
 void chumstreamer_desktop::on_pushButton_clicked()
 {
+  /*
   QString modelBitmask="";
   for(int counter=0;counter<ui->musicFolderListWidget->count();counter++)
   {
@@ -216,7 +217,9 @@ void chumstreamer_desktop::on_pushButton_clicked()
     }
     else{modelBitmask+="0";}
   }
-  displayRoot(modelBitmask);
+  */
+  //displayRoot(modelBitmask);
+  displayRoot();
   /*
   qDebug() << "button clicked";
 
@@ -406,15 +409,16 @@ void chumstreamer_desktop::on_artistListWidget_itemDoubleClicked(QListWidgetItem
   */
 }
 
-/*
 void chumstreamer_desktop::on_backButton_clicked()
 {
+  goBack();
+  /*
   if(prevDirIDVec.size()==1||prevDirIDVec.size()==2){on_pushButton_clicked();return;}
   setDir(prevDirIDVec.at(1).id);
   ui->pwdLabel->setText(prevDirIDVec.at(1).name);
   prevDirIDVec.pop_front();
+  */
 }
-*/
 
 //void chumstreamer_desktop::keyPressTest(QKeyEvent* oneKey)
 void chumstreamer_desktop::keyPressEvent(QKeyEvent* oneKey)
@@ -602,7 +606,6 @@ void chumstreamer_desktop::on_playPauseButton_clicked()
 
 void chumstreamer_desktop::on_pushButton_2_clicked()
 {
-
   player->stop();
   qDebug() << "player stopped!";
   grayOutPlaylist();
@@ -621,6 +624,7 @@ void chumstreamer_desktop::grayOutPlaylist()
 
 void chumstreamer_desktop::on_artistListWidget_currentRowChanged(int currentRow)
 {
+  //TODO: send the signal to this list widget's model that the current item has changed, although on android i suppose there won't be any current items. there will just be list itmes with  checkboxes like in ultrasonic. so maybs some of the playlistAddFromChumListItem stuff should be ported to desktop idk
   if(player->state()!=QMediaPlayer::StoppedState){return;}
   qDebug() << "on_artistListWidget_currentRowChanged: state: "<<player->state();
   //dumb hack to prevent crashes that occur when an item is double clicked, and the list is cleared, and as a result this method returns -1
@@ -809,21 +813,17 @@ void chumstreamer_desktop::playlistAddFromNode(QDomNode oneDir)
 }
 */
 
-/*
 void chumstreamer_desktop::on_artistListWidget_playlistAppend()
 {
   latestPrepend=false;
-  addToPlaylistFromSlot(false);
+  chumstreamer_core::addToPlaylistFromSlot(false);
 }
-*/
 
-/*
 void chumstreamer_desktop::on_artistListWidget_playlistPrepend()
 {
   latestPrepend=true;
-  addToPlaylistFromSlot(true);
+  chumstreamer_core::addToPlaylistFromSlot(true);
 }
-*/
 
 void chumstreamer_desktop::on_artistListWidget_ReturnKey()
 {
@@ -847,7 +847,8 @@ void chumstreamer_desktop::on_nextTrackButton_clicked()
   else
   {
     qDebug()<<"on_nextTrackButton_clicked(): chooseNext() returned false";
-    return on_pushButton_2_clicked();
+    stop();
+    //return on_pushButton_2_clicked();
   }
 }
 
@@ -896,7 +897,7 @@ void chumstreamer_desktop::on_repeatToggleButton_clicked()
 
 void chumstreamer_desktop::toggleRepeating()
 {
-  chumstreamer_core::toggleRepeating(staticBool);
+  chumstreamer_core::toggleRepeating();
   if(repeating())
   {
     ui->repeatToggleButton->setText("repeat all");
@@ -931,10 +932,12 @@ void chumstreamer_desktop::on_randomToggleButton_clicked()
   toggleRandom();
   writeSave();
 }
+/*
 bool chumstreamer_desktop::random()
 {
   return ui->randomToggleButton->text()=="random on";
 }
+*/
 void chumstreamer_desktop::toggleRandom()
 {
   chumstreamer_core::toggleRandom();
@@ -976,3 +979,9 @@ bool chumstreamer_desktop::hasRed()
   return false;
 }
 */
+
+void chumstreamer_desktop::imageFromPixmap(QPixmap oneImage)
+{
+  ui->imageLabel->setPixmap(oneImage);
+  ui->imageLabel->show();
+}

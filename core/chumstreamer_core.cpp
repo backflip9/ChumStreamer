@@ -17,16 +17,16 @@
 #include<QJsonObject>
 #include<QJsonDocument>
 #include<algorithm>
+#include "musicfolderinfo.h"
 #include "chumlistitem.h"
-#include "authdialog.h"
+//###include "authdialog.h"
 //#include "md5.cpp";
 #include "chumstreamer_core.h"
-#include "ui_chumstreamer_core.h"
 #include<time.h>
 
 chumstreamer_core::chumstreamer_core(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::chumstreamer_core)
+    QMainWindow(parent)
+    //ui(new Ui::chumstreamer_core)
 {
   srand(time(NULL));
   //ui->setupUi(this);
@@ -147,7 +147,8 @@ void chumstreamer_core::getMusicFolders()
       oneFolderCheckbox->setCheckState(Qt::Checked);
     }
     //emit newFolder(oneFolderCheckbox);
-    directoryModel.append(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false));
+    //directoryModel.append(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false));
+    directoryModel.append(oneFolderCheckbox);
   }
   //populate artistListWidget somehow. actually maybe we can call this and the child can handle the signals that it emits.
   //on_pushButton_clicked();
@@ -212,7 +213,8 @@ void chumstreamer_core::on_pushButton_clicked()
 }
 */
 
-void chumstreamer_core::displayRoot(const QString& bitmask)
+//void chumstreamer_core::displayRoot(const QString& bitmask)
+void chumstreamer_core::displayRoot()
 {
   prevDirIDVec.clear();
   prevDirIDVec.push_front(musicFolderInfo("","-1"));
@@ -226,7 +228,7 @@ void chumstreamer_core::displayRoot(const QString& bitmask)
   for(int counter=0;counter<directoryModel.size();counter++)
   {
     //if(i=='1')
-    if(directoryModel.at(counter)->checkState==Qt::Checked)
+    if(directoryModel.at(counter)->checkState()==Qt::Checked)
     {
       //call setMusicFolders to add them to the qlistwidget. we aren't gonna pass a qstringlist by reference thru all those stack frames even if it might be easier, we're just gonna call setMusicFolders multiple times until the artist list is populated with all the relevant items
       QUrl currentUrl=originalUrl;
@@ -278,7 +280,7 @@ void chumstreamer_core::displayDir()//virtual
   for(int j=0;j<oneNodeList.length();j++)
   {
     QDomNode oneDir=oneNodeList.at(j);
-    ChumListItem *chumOneFolderCheckbox = new ChumListItem(oneDir.attributes().namedItem("title").nodeValue(),oneDir.attributes().namedItem("id").nodeValue(),oneDir.attributes().namedItem("isDir").nodeValue()=="false");
+    //ChumListItem *chumOneFolderCheckbox = new ChumListItem(oneDir.attributes().namedItem("title").nodeValue(),oneDir.attributes().namedItem("id").nodeValue(),oneDir.attributes().namedItem("isDir").nodeValue()=="false");
     //emit newArtist(new ChumListItem(oneDir.attributes().namedItem("title").nodeValue(),oneDir.attributes().namedItem("id").nodeValue(),oneDir.attributes().namedItem("isDir").nodeValue()=="false"));
     artistModel.append(new ChumListItem(oneDir.attributes().namedItem("title").nodeValue(),oneDir.attributes().namedItem("id").nodeValue(),oneDir.attributes().namedItem("isDir").nodeValue()=="false"));
     //ui->artistListWidget->addItem(chumOneFolderCheckbox);
@@ -379,6 +381,7 @@ void chumstreamer_core::nextDir(QListWidgetItem *item)
   */
 }
 
+/*
 void chumstreamer_core::on_backButton_clicked()
 {
   if(prevDirIDVec.size()==1||prevDirIDVec.size()==2){on_pushButton_clicked();return;}
@@ -386,6 +389,17 @@ void chumstreamer_core::on_backButton_clicked()
   //ui->pwdLabel->setText(prevDirIDVec.at(1).name);
   prevDirIDVec.pop_front();
 }
+*/
+
+void chumstreamer_core::goBack()
+{
+  //if(prevDirIDVec.size()==1||prevDirIDVec.size()==2){on_pushButton_clicked();return;}
+  if(prevDirIDVec.size()==1||prevDirIDVec.size()==2){displayRoot();return;}
+  setDir(prevDirIDVec.at(1).id);
+  //ui->pwdLabel->setText(prevDirIDVec.at(1).name);
+  prevDirIDVec.pop_front();
+}
+
 
 //all keyboard/mouse things are obviously desktop specific
 //void chumstreamer_core::keyPressTest(QKeyEvent* oneKey)
@@ -454,7 +468,9 @@ void chumstreamer_core::on_playButton_clicked()
   else if(player->state()==QMediaPlayer::StoppedState)
   {
     qDebug() << "playpause: neither!";
-    return on_nextTrackButton_clicked();
+    //on_nextTrackButton_clicked();
+    playNext();
+    return;
   }
 }
 
@@ -520,7 +536,8 @@ void chumstreamer_core::notifySongEnd()
   {
     qDebug() << "media has ended!";
     //return on_nextTrackButton_clicked();
-    return playNext();
+    playNext();
+    return;
     //if(chooseNext()){return streamSong();}
   }
   else
@@ -584,7 +601,7 @@ bool chumstreamer_core::chooseNext()
   //find the first non-cyan song
   for(int i=0;i<playlistModel.size();i++)
   {
-    if(songList.at(i)->status==unplayed)
+    if(playlistModel.at(i)->info->status==unplayed)
     {
       return true;
     }
@@ -619,10 +636,12 @@ void chumstreamer_core::stop()
   grayOutPlaylist();
 }
 
+/*
 void chumstreamer_core::on_pushButton_2_clicked()
 {
   stop();
 }
+*/
 
 void chumstreamer_core::grayOutPlaylist()
 {
@@ -719,7 +738,7 @@ void chumstreamer_core::addToPlaylistFromSlot(bool prepend,ChumListItem* optiona
     if(artistModel.hasCurrentItem())
     {
       //playlistAddFromChumListItem(dynamic_cast<ChumListItem *>(ui->artistListWidget->currentItem()),prepend);
-      playlistAddFromChumListItem(dynamic_cast<ChumListItem *>(artistModel.currentItem()),prepend);
+      playlistAddFromChumListItem(dynamic_cast<ChumListItem *>(artistModel.getCurrentItem()),prepend);
     } //there's no else for this cause we have nothing to do if no items are highlighted and the user presses A or E
   }
   else
@@ -771,19 +790,20 @@ void chumstreamer_core::playlistAddFromChumListItem(ChumListItem* oneChum,bool p
     {
       //apparently we have to copy this object cause *oneChum points to an existing ChumListItem that already exists in another QListWidget
       ChumListItem* newChum=new ChumListItem(*oneChum);
-      if(prepend && playlistMode->isEmpty())
+      if(prepend && playlistModel.isEmpty())
       {
         //qDebug() << "prending at: "<<index;
         int offset=1;
         if(hasRed()){offset=0;}
         //ui->playlistListWidget->insertItem(getCurrentPlaylistIndex()+offset,newChum);
         //emit newArtist(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false));
-        playlistModel.insert(newChum,getCurrentPlaylistIndex()+offset);
+        //playlistModel.insert(newChum,getCurrentPlaylistIndex()+offset);
+        playlistModel.insert(getCurrentPlaylistIndex()+offset,newChum);
         //ui->playlistListWidget->insertItem(getCurrentPlaylistIndex()+1,newChum);
       }
       else{
         //ui->playlistListWidget->addItem(newChum);
-        pliaylistModel.append(newChum);
+        playlistModel.append(newChum);
       }
     }
   }
@@ -901,9 +921,9 @@ void chumstreamer_core::on_artistListWidget_Clear()
 }
 */
 
-void chumstreamer_core::clearPlaylist();
+void chumstreamer_core::clearPlaylist()
 {
-  playlistModel.candy->clear();
+  playlistModel.candy.clear();
 }
 
 /*
@@ -974,22 +994,27 @@ int chumstreamer_core::getCurrentPlaylistIndex()
   return 0;
 }
 
+//todo: make sure toggleRepeating() writes to the save file. i can't think of a time when we wouldn't want to do that
+/*
 void chumstreamer_core::on_repeatToggleButton_clicked()
 {
   toggleRepeating();
   writeSave();
 }
+*/
 
 //desktop specific
 void chumstreamer_core::toggleRepeating()
 {
   repeatingEnabled^=true;
+  writeSave();
 }
 
 //if we can't predict what the repeat button is currently set to
 void chumstreamer_core::toggleRepeating(bool staticBool)
 {
   repeatingEnabled=staticBool;
+  writeSave();
 }
 
 bool chumstreamer_core::repeating()
@@ -1027,7 +1052,8 @@ void chumstreamer_core::toggleRandom(bool staticBool)
 }
 void chumstreamer_core::on_clearButton_clicked()
 {
-  on_artistListWidget_Clear();
+  //on_artistListWidget_Clear();
+  clearPlaylist();
 }
 
 bool chumstreamer_core::hasRed()
