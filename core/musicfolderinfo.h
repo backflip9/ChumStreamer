@@ -1,6 +1,8 @@
 #ifndef MUSICFOLDERINFO_H
 #define MUSICFOLDERINFO_H
-enum songStatus{played,playing,unplayed}
+#include<QString>
+//class QString;
+enum songStatus{played,playing,unplayed};
 struct musicFolderInfo
 {
   musicFolderInfo(){name="";id="";}
