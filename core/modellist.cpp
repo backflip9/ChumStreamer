@@ -27,3 +27,26 @@ bool modelList::find(const QString& needle)
   }
   return false;
 }
+bool modelList::hasCurrentItem()
+{
+  for(int i=0;i<candy.size();i++)
+  {
+    if(candy[i]->selected==true)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+QList<ChumListItem* > modelList::getCurrentItem()
+{
+  QList<ChumListItem* > ret;
+  for(int i=0;i<candy.size();i++)
+  {
+    if(candy[i]->selected==true)
+    {
+      ret.append(candy[i]);
+    }
+  }
+  return ret;
+}

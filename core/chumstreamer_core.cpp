@@ -34,6 +34,17 @@ chumstreamer_core::chumstreamer_core(QWidget *parent) :
   {
     setMusicFolders();
   }
+
+  /*
+  connect(directoryModel,&modelList::listChanged,this,&chumstreamer_core::dirModelMirror);
+  connect(artistModel,&modelList::listChanged,this,&chumstreamer_core::artistModelMirror);
+  connect(playlistModel,&modelList::listChanged,this,&chumstreamer_core::playlistModelMirror);
+  */
+  /*
+  connect(directoryModel,&modelList::testSignal,this,&chumstreamer_core::dirModelMirror);
+  connect(artistModel,&modelList::testSignal,this,&chumstreamer_core::artistModelMirror);
+  connect(playlistModel,&modelList::testSignal,this,&chumstreamer_core::playlistModelMirror);
+  */
 }
 
 chumstreamer_core::~chumstreamer_core()
@@ -52,7 +63,7 @@ QUrl chumstreamer_core::buildQueryString(QString page)
   QUrlQuery myQuery;
   myQuery.addQueryItem("u",Username());
   myQuery.addQueryItem("p",Password());
-  myQuery.addQueryItem("c","chumstreamer_core");
+  myQuery.addQueryItem("c","ChumStreamer");
   myQuery.addQueryItem("v","1.15.0");
   result.setQuery(myQuery);
   return result;
@@ -71,7 +82,7 @@ void chumstreamer_core::addArtists()
   //delete the reply so that subsequent queries won't fail?
   oneReply->deleteLater();
   oneReply=nullptr;
-  qDebug("addartists success");
+  qDebug("core addartists success");
   //desktop
   /*
   if(player->state()==QMediaPlayer::StoppedState)
@@ -99,7 +110,7 @@ void chumstreamer_core::addArtists()
       //we're hardcoding the isSong attribute to be false cause getIndexes returns weird tags that are unique, and don't have the isDir attribute
       //emit newArtist(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false));
       //now the application can handle this with the signal emitted by modelList
-      artistModel.append(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false));
+      artistModel->append(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false));
     }
   }
   //emit artistListUpdate(artistModel);
@@ -147,8 +158,8 @@ void chumstreamer_core::getMusicFolders()
       oneFolderCheckbox->setCheckState(Qt::Checked);
     }
     //emit newFolder(oneFolderCheckbox);
-    //directoryModel.append(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false));
-    directoryModel.append(oneFolderCheckbox);
+    //directoryModel->append(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false));
+    directoryModel->append(oneFolderCheckbox);
   }
   //populate artistListWidget somehow. actually maybe we can call this and the child can handle the signals that it emits.
   //on_pushButton_clicked();
@@ -169,7 +180,7 @@ void chumstreamer_core::on_pushButton_clicked()
 
   //hide things that aren't relevant anymore
   //ui->artistListWidget->clear();
-  artistModel.clear();
+  artistModel->clear();
   //handles its own conditions concerning the player's state
   songInfoDisplay(false);
   //ui->pwdLabel->hide();
@@ -219,16 +230,16 @@ void chumstreamer_core::displayRoot()
   prevDirIDVec.clear();
   prevDirIDVec.push_front(musicFolderInfo("","-1"));
 
-  qDebug() << "cleared artistListWidget in pushbutton slot";
+  qDebug() << "cleared artistListWidget in displayRoot()";
 
   const QUrl originalUrl=buildQueryString("getIndexes");
   //idk if you're allowed to do range-based for with qstrings
   //for(auto& i:bitmask)
   //for(int counter=0;counter<bitmask.length();counter++)
-  for(int counter=0;counter<directoryModel.size();counter++)
+  for(int counter=0;counter<directoryModel->size();counter++)
   {
     //if(i=='1')
-    if(directoryModel.at(counter)->checkState()==Qt::Checked)
+    if(directoryModel->at(counter)->checkState()==Qt::Checked)
     {
       //call setMusicFolders to add them to the qlistwidget. we aren't gonna pass a qstringlist by reference thru all those stack frames even if it might be easier, we're just gonna call setMusicFolders multiple times until the artist list is populated with all the relevant items
       QUrl currentUrl=originalUrl;
@@ -236,11 +247,13 @@ void chumstreamer_core::displayRoot()
       //this isn't working atm
       //currentQuery.addQueryItem(ui->musicFolderListWidget->item(counter)->getArtistID());
       //currentQuery.addQueryItem("musicFolderId",dynamic_cast<ChumListItem *>(ui->musicFolderListWidget->item(counter))->info->id);
-      currentQuery.addQueryItem("musicFolderId",dynamic_cast<ChumListItem *>(directoryModel.at(counter))->info->id);
+      currentQuery.addQueryItem("musicFolderId",dynamic_cast<ChumListItem *>(directoryModel->at(counter))->info->id);
       currentUrl.setQuery(currentQuery);
+      qDebug() << "displayroot url: "<<currentUrl.toString();
       QNetworkReply* getIndexesReply=manager.get(QNetworkRequest(currentUrl));
       connect(getIndexesReply,&QNetworkReply::finished,this,&chumstreamer_core::addArtists);
     }
+    else{qDebug() << "not checked in displayRoot()";}
   }
 }
 
@@ -282,7 +295,7 @@ void chumstreamer_core::displayDir()//virtual
     QDomNode oneDir=oneNodeList.at(j);
     //ChumListItem *chumOneFolderCheckbox = new ChumListItem(oneDir.attributes().namedItem("title").nodeValue(),oneDir.attributes().namedItem("id").nodeValue(),oneDir.attributes().namedItem("isDir").nodeValue()=="false");
     //emit newArtist(new ChumListItem(oneDir.attributes().namedItem("title").nodeValue(),oneDir.attributes().namedItem("id").nodeValue(),oneDir.attributes().namedItem("isDir").nodeValue()=="false"));
-    artistModel.append(new ChumListItem(oneDir.attributes().namedItem("title").nodeValue(),oneDir.attributes().namedItem("id").nodeValue(),oneDir.attributes().namedItem("isDir").nodeValue()=="false"));
+    artistModel->append(new ChumListItem(oneDir.attributes().namedItem("title").nodeValue(),oneDir.attributes().namedItem("id").nodeValue(),oneDir.attributes().namedItem("isDir").nodeValue()=="false"));
     //ui->artistListWidget->addItem(chumOneFolderCheckbox);
 
     //add the regular QListWidgetItem to the artist/song list. this involves setting the song ID as the tooltip value
@@ -477,9 +490,9 @@ void chumstreamer_core::on_playButton_clicked()
 void chumstreamer_core::streamSong()
 {
   //ui->playlistListWidget->item(getCurrentPlaylistIndex())->setForeground(Qt::red);
-  playlistModel.candy.at(getCurrentPlaylistIndex())->info->status=playing;
+  playlistModel->candy.at(getCurrentPlaylistIndex())->info->status=playing;
   //QString songID=dynamic_cast<ChumListItem *>(ui->playlistListWidget->item(getCurrentPlaylistIndex()))->info->id;
-  QString songID=playlistModel.candy.at(getCurrentPlaylistIndex())->info->id;
+  QString songID=playlistModel->candy.at(getCurrentPlaylistIndex())->info->id;
   QUrl streamUrl=buildQueryString("stream");
   QUrlQuery currentQuery(streamUrl.query());
   currentQuery.addQueryItem("id",songID);
@@ -585,23 +598,23 @@ bool chumstreamer_core::chooseNext()
 */
 bool chumstreamer_core::chooseNext()
 {
-  if(playlistModel.size()==0)
+  if(playlistModel->size()==0)
   {
     qDebug()<<"chooseNext: playlist is empty, returning false";
     return false;
   }
   //check if there's a song that's currently playing, and set it to cyan
-  for(int i=0;i<playlistModel.size();i++)
+  for(int i=0;i<playlistModel->size();i++)
   {
-    if(playlistModel.at(i)->info->status==playing)
+    if(playlistModel->at(i)->info->status==playing)
     {
-      playlistModel.at(i)->info->status=played;
+      playlistModel->at(i)->info->status=played;
     }
   }
   //find the first non-cyan song
-  for(int i=0;i<playlistModel.size();i++)
+  for(int i=0;i<playlistModel->size();i++)
   {
-    if(playlistModel.at(i)->info->status==unplayed)
+    if(playlistModel->at(i)->info->status==unplayed)
     {
       return true;
     }
@@ -645,10 +658,10 @@ void chumstreamer_core::on_pushButton_2_clicked()
 
 void chumstreamer_core::grayOutPlaylist()
 {
-  for(int i=0;i<playlistModel.candy.size();i++)
+  for(int i=0;i<playlistModel->candy.size();i++)
   {
     //ui->playlistListWidget->item(i)->setForeground(Qt::lightGray);
-    playlistModel.at(i)->info->status=unplayed;
+    playlistModel->at(i)->info->status=unplayed;
   }
 }
 
@@ -735,10 +748,10 @@ void chumstreamer_core::addToPlaylistFromSlot(bool prepend,ChumListItem* optiona
   if(optionalChum==NULL)
   {
     //if(dynamic_cast<clickableList *>(ui->artistListWidget)->hasCurrentItem())
-    if(artistModel.hasCurrentItem())
+    if(artistModel->hasCurrentItem())
     {
       //playlistAddFromChumListItem(dynamic_cast<ChumListItem *>(ui->artistListWidget->currentItem()),prepend);
-      playlistAddFromChumListItem(dynamic_cast<ChumListItem *>(artistModel.getCurrentItem()),prepend);
+      playlistAddFromChumListItem(dynamic_cast<ChumListItem *>(artistModel->getCurrentItem()[0]),prepend);
     } //there's no else for this cause we have nothing to do if no items are highlighted and the user presses A or E
   }
   else
@@ -765,7 +778,7 @@ void chumstreamer_core::playlistAddFromChumListItem(ChumListItem* oneChum,bool p
         if(hasRed()){offset=0;}
         //ui->playlistListWidget->insertItem(getCurrentPlaylistIndex()+offset,newChum);
         //emit newArtist(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false));
-        playlistModel.insert(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false),getCurrentPlaylistIndex()+offset);
+        playlistModel->insert(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false),getCurrentPlaylistIndex()+offset);
         //ui->playlistListWidget->insertItem(getCurrentPlaylistIndex()+1,newChum);
       }
       else{
@@ -786,24 +799,24 @@ void chumstreamer_core::playlistAddFromChumListItem(ChumListItem* oneChum,bool p
   {
     //and only if that item doesn't already exist in the playlist
     //if(ui->playlistListWidget->findItems(oneChum).size()==0)
-    if(!playlistModel.find(oneChum->info->name))
+    if(!playlistModel->find(oneChum->info->name))
     {
       //apparently we have to copy this object cause *oneChum points to an existing ChumListItem that already exists in another QListWidget
       ChumListItem* newChum=new ChumListItem(*oneChum);
-      if(prepend && playlistModel.isEmpty())
+      if(prepend && playlistModel->isEmpty())
       {
         //qDebug() << "prending at: "<<index;
         int offset=1;
         if(hasRed()){offset=0;}
         //ui->playlistListWidget->insertItem(getCurrentPlaylistIndex()+offset,newChum);
         //emit newArtist(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false));
-        //playlistModel.insert(newChum,getCurrentPlaylistIndex()+offset);
-        playlistModel.insert(getCurrentPlaylistIndex()+offset,newChum);
+        //playlistModel->insert(newChum,getCurrentPlaylistIndex()+offset);
+        playlistModel->insert(getCurrentPlaylistIndex()+offset,newChum);
         //ui->playlistListWidget->insertItem(getCurrentPlaylistIndex()+1,newChum);
       }
       else{
         //ui->playlistListWidget->addItem(newChum);
-        playlistModel.append(newChum);
+        playlistModel->append(newChum);
       }
     }
   }
@@ -923,7 +936,7 @@ void chumstreamer_core::on_artistListWidget_Clear()
 
 void chumstreamer_core::clearPlaylist()
 {
-  playlistModel.candy.clear();
+  playlistModel->candy.clear();
 }
 
 /*
@@ -961,18 +974,18 @@ int chumstreamer_core::getCurrentPlaylistIndex()
 int chumstreamer_core::getCurrentPlaylistIndex()
 {
   //case 1: there's already a song that's red, so we'll return that
-  for(int i=0;i<playlistModel.size();i++)
+  for(int i=0;i<playlistModel->size();i++)
   {
     //if(ui->playlistListWidget->item(i)->foreground()==Qt::red){return i;}
-    if(playlistModel.candy.at(i)->info->status==playing){return i;}
+    if(playlistModel->candy.at(i)->info->status==playing){return i;}
   }
   if(random())
   {
     QVector<int> viableVec;
-    for(int i=0;i<playlistModel.size();i++)
+    for(int i=0;i<playlistModel->size();i++)
     {
       //if(ui->playlistListWidget->item(i)->foreground()!=Qt::cyan)
-      if(playlistModel.candy.at(i)->info->status==played)
+      if(playlistModel->candy.at(i)->info->status==played)
       {
         viableVec.push_back(i);
       }
@@ -984,10 +997,10 @@ int chumstreamer_core::getCurrentPlaylistIndex()
   //case 2: there aren't any red songs, so return the first non-cyan song
   else{
     //for(int i=0;i<ui->playlistListWidget->count();i++)
-    for(int i=0;i<playlistModel.size();i++)
+    for(int i=0;i<playlistModel->size();i++)
     {
       //if(ui->playlistListWidget->item(i)->foreground()!=Qt::cyan){return i;}
-      if(playlistModel.candy.at(i)->info->status!=played){return i;}
+      if(playlistModel->candy.at(i)->info->status!=played){return i;}
     }
   }
   //else the playlist is empty or something
@@ -1059,10 +1072,10 @@ void chumstreamer_core::on_clearButton_clicked()
 bool chumstreamer_core::hasRed()
 {
   //for(int i=0;i<ui->playlistListWidget->count();i++)
-  for(int i=0;i<playlistModel.size();i++)
+  for(int i=0;i<playlistModel->size();i++)
   {
     //if(ui->playlistListWidget->item(i)->foreground()==Qt::red){return true;}
-    if(playlistModel.candy.at(i)->info->status==playing){return true;}
+    if(playlistModel->candy.at(i)->info->status==playing){return true;}
   }
   return false;
 }
@@ -1081,10 +1094,10 @@ void chumstreamer_core::writeSave()
   loginInfo["repeating"]=repeating()?"1":"0";
   QString folderBitmask="";
   //for(int counter=0;counter<ui->musicFolderListWidget->count();counter++)
-  for(int counter=0;counter<directoryModel.size();counter++)
+  for(int counter=0;counter<directoryModel->size();counter++)
   {
     //idk if this works for the chumlistitems that we put into this model
-    if(directoryModel.candy.at(counter)->checkState()==Qt::Checked)
+    if(directoryModel->candy.at(counter)->checkState()==Qt::Checked)
     {
       folderBitmask+="1";
     }

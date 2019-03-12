@@ -2,7 +2,6 @@
 #define chumstreamer_core_H
 
 #include <QMainWindow>
-#include <QMainWindow>
 #include<QtNetwork/QNetworkAccessManager>
 #include<QVector>
 #include<QMediaPlayer>
@@ -47,6 +46,11 @@ signals:
     void newArtist(ChumListItem*,bool prepend=false);
     void newFolder(ChumListItem*)
     */
+public slots:
+    virtual void dirModelMirror(ChumListItem* newItem,int index=-1)=0;//pure virtual
+    virtual void artistModelMirror(ChumListItem* newItem,int index=-1)=0;//pure virtual
+    virtual void playlistModelMirror(ChumListItem* newItem,int index=-1)=0;//pure virtual
+
 private slots:
     //buttons:
     //void on_pushButton_clicked();
@@ -111,6 +115,7 @@ private slots:
 
     void on_clearButton_clicked();
 
+
 protected:
     //Ui::chumstreamer_core *ui;
     QNetworkAccessManager manager;
@@ -118,9 +123,9 @@ protected:
     QList<ChumListItem *> artistModel;
     QList<ChumListItem *> playlistModel;
     */
-    modelList directoryModel;
-    modelList artistModel;
-    modelList playlistModel;
+    modelList* directoryModel=new modelList;
+    modelList* artistModel=new modelList;
+    modelList* playlistModel=new modelList;
     //virtual void show(){QMainWindow::show();}
     //QVector<QNetworkReply* > replyVec;
     //QNetworkReply* reply;

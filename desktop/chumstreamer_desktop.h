@@ -29,9 +29,11 @@ class chumstreamer_desktop : public chumstreamer_core
 public:
     explicit chumstreamer_desktop(QWidget *parent = nullptr);
     ~chumstreamer_desktop();
+    /*
     QUrl& Server(){return server;}
     QString& Username(){return username;}
     QString& Password(){return password;}
+    */
     //void setDir(const QString& dir);
     //public for authdialog to use
     //void writeSave();
@@ -95,16 +97,21 @@ private slots:
 
     void on_clearButton_clicked();
 
+    void dirModelMirror(ChumListItem* newItem,int index=-1);
+    void artistModelMirror(ChumListItem* newItem,int index=-1);
+    void playlistModelMirror(ChumListItem* newItem,int index=-1);
+
 private:
     Ui::chumstreamer_desktop *ui;
+    /*
     QNetworkAccessManager manager;
     //QVector<QNetworkReply* > replyVec;
     //QNetworkReply* reply;
     QString cacheFilePath;
-    //QString server="";
     QUrl server;
     QString username="";
     QString password="";
+    */
     QString filePath;
     //void setMusicFolders();
     //bool handleNetworkError(QNetworkReply* reply,QString funcName="");

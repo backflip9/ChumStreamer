@@ -29,10 +29,22 @@ chumstreamer_desktop::chumstreamer_desktop(QWidget *parent) :
     chumstreamer_core(parent),
     ui(new Ui::chumstreamer_desktop)
 {
-  //srand(time(NULL));
   ui->setupUi(this);
+  //ensure that the models stay in sync with the list widgets
+
+
+  connect(directoryModel,&modelList::listChanged,this,&chumstreamer_core::dirModelMirror);
+  connect(artistModel,&modelList::listChanged,this,&chumstreamer_core::artistModelMirror);
+  connect(playlistModel,&modelList::listChanged,this,&chumstreamer_core::playlistModelMirror);
+
+  /*
+  connect(directoryModel,&modelList::listChanged,this,&chumstreamer_desktop::dirModelMirror);
+  connect(artistModel,&modelList::listChanged,this,&chumstreamer_desktop::artistModelMirror);
+  connect(playlistModel,&modelList::listChanged,this,&chumstreamer_desktop::playlistModelMirror);
+  */
+
   filePath = QDir::homePath() + "/Documents/tmpDownload.xml";
-  cacheFilePath=QDir::homePath() + "/chumstreamer_desktop.json";
+  //cacheFilePath=QDir::homePath() + "/chumstreamer_desktop.json";
   //ui->imageLabel->hide();
   ui->pwdLabel->hide();
   ui->nextButton->hide();
@@ -984,4 +996,44 @@ void chumstreamer_desktop::imageFromPixmap(QPixmap oneImage)
 {
   ui->imageLabel->setPixmap(oneImage);
   ui->imageLabel->show();
+}
+
+void chumstreamer_desktop::dirModelMirror(ChumListItem* newItem,int index)
+{
+  if(index==-1)
+  {
+    ui->musicFolderListWidget->addItem(newItem);
+    return;
+  }
+  else
+  {
+    ui->musicFolderListWidget->insertItem(index,newItem);
+    return;
+  }
+}
+void chumstreamer_desktop::artistModelMirror(ChumListItem* newItem,int index)
+{
+  if(index==-1)
+  {
+    ui->artistListWidget->addItem(newItem);
+    return;
+  }
+  else
+  {
+    ui->artistListWidget->insertItem(index,newItem);
+    return;
+  }
+}
+void chumstreamer_desktop::playlistModelMirror(ChumListItem* newItem,int index)
+{
+  if(index==-1)
+  {
+    ui->playlistListWidget->addItem(newItem);
+    return;
+  }
+  else
+  {
+    ui->playlistListWidget->insertItem(index,newItem);
+    return;
+  }
 }

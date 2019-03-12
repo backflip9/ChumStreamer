@@ -20,13 +20,17 @@ public:
     int size(){return candy.size();}
     void clear(){return candy.clear();}
     bool isEmpty(){return candy.empty();}
-    QList<ChumListItem* > candy;
-    bool hasCurrentItem(){return curr!=-1;}
+    //bool hasCurrentItem(){return curr!=-1;}
+    bool hasCurrentItem();
     //int getCurrentItem(){return curr;}
-    ChumListItem* getCurrentItem(){return candy[curr];}
-    void setCurrentItem(const int input){curr=input;}
+    QList<ChumListItem* > getCurrentItem();
+    virtual void setCurrentItem(const int input){curr=input;}
+    
+    //member
+    QList<ChumListItem* > candy;
 signals:
     void listChanged(ChumListItem* newItem,int index=-1);//if we're appending, we leave it at -1
+    //void testSignal(){return;}
 private:
     //int curr=-1;
     int curr;
