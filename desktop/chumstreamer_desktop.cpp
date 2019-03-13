@@ -37,11 +37,15 @@ chumstreamer_desktop::chumstreamer_desktop(QWidget *parent) :
   connect(artistModel,&modelList::listChanged,this,&chumstreamer_core::artistModelMirror);
   connect(playlistModel,&modelList::listChanged,this,&chumstreamer_core::playlistModelMirror);
 
-  /*
-  connect(directoryModel,&modelList::listChanged,this,&chumstreamer_desktop::dirModelMirror);
-  connect(artistModel,&modelList::listChanged,this,&chumstreamer_desktop::artistModelMirror);
-  connect(playlistModel,&modelList::listChanged,this,&chumstreamer_desktop::playlistModelMirror);
-  */
+
+  //omfg an actual working lambda
+  connect(directoryModel,&modelList::listCleared,[this](){ui->musicFolderListWidget->clear();});
+  connect(artistModel,&modelList::listCleared,[this](){ui->artistListWidget->clear();});
+  connect(playlistModel,&modelList::listCleared,[this](){ui->playlistListWidget->clear();});
+
+  setRepeatText();
+  setRandomText();
+
 
   filePath = QDir::homePath() + "/Documents/tmpDownload.xml";
   //cacheFilePath=QDir::homePath() + "/chumstreamer_desktop.json";
@@ -51,7 +55,7 @@ chumstreamer_desktop::chumstreamer_desktop(QWidget *parent) :
   ui->playPauseButton->hide();
   ui->volumeSlider->setTickInterval(2);
   ui->volumeSlider->setRange(0,100);
-  ui->volumeSlider->setValue(DEFAULT_VOLUME);
+  //ui->volumeSlider->setValue(DEFAULT_VOLUME);
 
   //hide individual song info(should be blank if we're just starting up)
   songInfoDisplay(false);
@@ -59,10 +63,12 @@ chumstreamer_desktop::chumstreamer_desktop(QWidget *parent) :
   player->setVolume(ui->volumeSlider->value());
   //copypaste from authDialog class
   //populate the members with auth info from the dat file, if it exists
+  /*
   if(chumstreamer_core::applyFromSave())
   {
     setMusicFolders();
   }
+  */
   /*
   if(QDir(QDir::homePath()).exists(QFile(cacheFilePath).fileName()))
   {
@@ -219,6 +225,7 @@ void chumstreamer_desktop::on_configureButton_clicked()
 
 void chumstreamer_desktop::on_pushButton_clicked()
 {
+  displayRoot();
   /*
   QString modelBitmask="";
   for(int counter=0;counter<ui->musicFolderListWidget->count();counter++)
@@ -231,7 +238,6 @@ void chumstreamer_desktop::on_pushButton_clicked()
   }
   */
   //displayRoot(modelBitmask);
-  displayRoot();
   /*
   qDebug() << "button clicked";
 
@@ -866,7 +872,9 @@ void chumstreamer_desktop::on_nextTrackButton_clicked()
 
 void chumstreamer_desktop::on_artistListWidget_Clear()
 {
-  ui->playlistListWidget->clear();
+  //clear the model instead of the ui element
+  playlistModel->clear();
+  //ui->playlistListWidget->clear();
 }
 
 /*
@@ -904,12 +912,18 @@ int chumstreamer_desktop::getCurrentPlaylistIndex()
 void chumstreamer_desktop::on_repeatToggleButton_clicked()
 {
   toggleRepeating();
-  writeSave();
+  //the base class calls this
+  //writeSave();
 }
 
 void chumstreamer_desktop::toggleRepeating()
 {
   chumstreamer_core::toggleRepeating();
+  setRepeatText();
+}
+
+void chumstreamer_desktop::setRepeatText()
+{
   if(repeating())
   {
     ui->repeatToggleButton->setText("repeat all");
@@ -924,14 +938,7 @@ void chumstreamer_desktop::toggleRepeating()
 void chumstreamer_desktop::toggleRepeating(bool staticBool)
 {
   chumstreamer_core::toggleRepeating(staticBool);
-  if(staticBool)
-  {
-    ui->repeatToggleButton->setText("repeat all");
-  }
-  else
-  {
-    ui->repeatToggleButton->setText("no repeat");
-  }
+  setRepeatText();
 }
 
 void chumstreamer_desktop::on_volumeSlider_sliderReleased()
@@ -942,7 +949,8 @@ void chumstreamer_desktop::on_volumeSlider_sliderReleased()
 void chumstreamer_desktop::on_randomToggleButton_clicked()
 {
   toggleRandom();
-  writeSave();
+  //the parent calls this
+  //writeSave();
 }
 /*
 bool chumstreamer_desktop::random()
@@ -953,27 +961,25 @@ bool chumstreamer_desktop::random()
 void chumstreamer_desktop::toggleRandom()
 {
   chumstreamer_core::toggleRandom();
+  setRandomText();
+}
+
+void chumstreamer_desktop::setRandomText()
+{
   if(random())
   {
     ui->randomToggleButton->setText("random on");
   }
-  else{
+  else
+  {
     ui->randomToggleButton->setText("random off");
   }
-
 }
-
 //if we can't predict what the repeat button is currently set to
 void chumstreamer_desktop::toggleRandom(bool staticBool)
 {
   chumstreamer_core::toggleRandom(staticBool);
-  if(staticBool)
-  {
-    ui->randomToggleButton->setText("random on");
-  }
-  else{
-    ui->randomToggleButton->setText("random off");
-  }
+  setRandomText();
 }
 
 void chumstreamer_desktop::on_clearButton_clicked()
@@ -998,8 +1004,22 @@ void chumstreamer_desktop::imageFromPixmap(QPixmap oneImage)
   ui->imageLabel->show();
 }
 
-void chumstreamer_desktop::dirModelMirror(ChumListItem* newItem,int index)
+void chumstreamer_desktop::dirModelMirror(ChumListItem* newItem/*,bool checked*/,int index)
 {
+  /*
+  if(checked)
+  {
+    newItem->setCheckState(Qt::Checked);
+  }
+  else{
+    newItem->setCheckState(Qt::Unchecked);
+  }
+  */
+  /*
+  qDebug() << "chumstreamer_desktop::dirModelMirror(): checkstate: "<<newItem->checkState();
+  qDebug() << "chumstreamer_desktop::dirModelMirror(): flags: "<<newItem->flags();
+  qDebug() << "chumstreamer_desktop::dirModelMirror(): address: "<<newItem;
+  */
   if(index==-1)
   {
     ui->musicFolderListWidget->addItem(newItem);
@@ -1013,6 +1033,10 @@ void chumstreamer_desktop::dirModelMirror(ChumListItem* newItem,int index)
 }
 void chumstreamer_desktop::artistModelMirror(ChumListItem* newItem,int index)
 {
+  /*
+  qDebug() << "artistModelMirror(): checkstate: "<<newItem->checkState();
+  qDebug() << "artistModelMirror(): flags: "<<newItem->flags();
+  */
   if(index==-1)
   {
     ui->artistListWidget->addItem(newItem);
@@ -1037,3 +1061,12 @@ void chumstreamer_desktop::playlistModelMirror(ChumListItem* newItem,int index)
     return;
   }
 }
+
+/*
+void chumstreamer_desktop::clearListWidget()
+{
+  qDebug() << "casting...";
+  qobject_cast<QListWidget* >(sender())->clear();
+  qDebug() << "clearing...";
+}
+*/

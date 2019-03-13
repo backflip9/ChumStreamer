@@ -32,6 +32,7 @@ chumstreamer_core::chumstreamer_core(QWidget *parent) :
   //ui->setupUi(this);
   if(applyFromSave())
   {
+    qDebug() << "checkedFolders: "<<checkedFolders;
     setMusicFolders();
   }
 
@@ -83,6 +84,7 @@ void chumstreamer_core::addArtists()
   oneReply->deleteLater();
   oneReply=nullptr;
   qDebug("core addartists success");
+  //artistModel->clear();
   //desktop
   /*
   if(player->state()==QMediaPlayer::StoppedState)
@@ -134,6 +136,7 @@ void chumstreamer_core::getMusicFolders()
   //delete the reply so that subsequent queries won't fail?
   oneReply->deleteLater();
   oneReply=nullptr;
+  directoryModel->clear();
   //this will have to be called manually by the child class when it wants to repopulate its musicFolderListWidget
   //ui->musicFolderListWidget->clear();
   //myFile.close();
@@ -159,6 +162,7 @@ void chumstreamer_core::getMusicFolders()
     }
     //emit newFolder(oneFolderCheckbox);
     //directoryModel->append(new ChumListItem(artistNode.attributes().namedItem("name").nodeValue(),artistNode.attributes().namedItem("id").nodeValue(),false));
+    //directoryModel->append(new ChumListItem(*oneFolderCheckbox));
     directoryModel->append(oneFolderCheckbox);
   }
   //populate artistListWidget somehow. actually maybe we can call this and the child can handle the signals that it emits.
@@ -227,6 +231,8 @@ void chumstreamer_core::on_pushButton_clicked()
 //void chumstreamer_core::displayRoot(const QString& bitmask)
 void chumstreamer_core::displayRoot()
 {
+  writeSave();
+  artistModel->clear();
   prevDirIDVec.clear();
   prevDirIDVec.push_front(musicFolderInfo("","-1"));
 
@@ -236,11 +242,13 @@ void chumstreamer_core::displayRoot()
   //idk if you're allowed to do range-based for with qstrings
   //for(auto& i:bitmask)
   //for(int counter=0;counter<bitmask.length();counter++)
+  QString newFolderBitMask="";
   for(int counter=0;counter<directoryModel->size();counter++)
   {
     //if(i=='1')
     if(directoryModel->at(counter)->checkState()==Qt::Checked)
     {
+      newFolderBitMask+="1";
       //call setMusicFolders to add them to the qlistwidget. we aren't gonna pass a qstringlist by reference thru all those stack frames even if it might be easier, we're just gonna call setMusicFolders multiple times until the artist list is populated with all the relevant items
       QUrl currentUrl=originalUrl;
       QUrlQuery currentQuery(currentUrl.query());
@@ -253,8 +261,13 @@ void chumstreamer_core::displayRoot()
       QNetworkReply* getIndexesReply=manager.get(QNetworkRequest(currentUrl));
       connect(getIndexesReply,&QNetworkReply::finished,this,&chumstreamer_core::addArtists);
     }
-    else{qDebug() << "not checked in displayRoot()";}
+    else{
+      qDebug() << "not checked in displayRoot()";
+      newFolderBitMask+="0";
+    }
   }
+  checkedFolders=newFolderBitMask;
+  qDebug() << "new checkedFolders: "<<checkedFolders;
 }
 
 void chumstreamer_core::setDir(const QString& dir)
@@ -285,6 +298,8 @@ void chumstreamer_core::displayDir()//virtual
 
   qDebug("displayDir success");
   songInfoDisplay(false);
+  artistModel->clear();//clear the vector and the displayed dirs in the child class
+  qDebug() << "cleared artistModel";
   QDomElement oneElement=myDoc.documentElement();
   //the progression should be <subsonic-response> -> <directory> -> many <child> tags
   QDomNode directoryTag=oneElement.firstChild();
@@ -1019,7 +1034,9 @@ void chumstreamer_core::on_repeatToggleButton_clicked()
 //desktop specific
 void chumstreamer_core::toggleRepeating()
 {
+  qDebug() << "repeatingEnabled before: "<<repeatingEnabled;
   repeatingEnabled^=true;
+  qDebug() << "repeatingEnabled after: "<<repeatingEnabled;
   writeSave();
 }
 
@@ -1057,11 +1074,13 @@ bool chumstreamer_core::random()
 void chumstreamer_core::toggleRandom()
 {
   randomEnabled^=true;
+  writeSave();
 }
 //if we can't predict what the repeat button is currently set to
 void chumstreamer_core::toggleRandom(bool staticBool)
 {
   randomEnabled=staticBool;
+  writeSave();
 }
 void chumstreamer_core::on_clearButton_clicked()
 {
@@ -1135,10 +1154,12 @@ bool chumstreamer_core::applyFromSave()
       Password()=saveData["password"].toString();
       //ui->volumeSlider->setValue(saveData["volume"].toInt());
       checkedFolders=saveData["checkedFolders"].toString();
-      //if(saveData["repeating"]=="1"){toggleRepeating(true);}
-      toggleRepeating(saveData["repeating"]=="1");
-      toggleRandom(saveData["random"]=="1");
-      qDebug() << "created QJsonObject from file and applied to main object members";
+      qDebug() << "applyFromSave(): checkedFolders 1: "<<checkedFolders;
+      //toggleRepeating(saveData["repeating"]=="1");
+      repeatingEnabled=saveData["repeating"]=="1";
+      //toggleRandom(saveData["random"]=="1");
+      randomEnabled=saveData["random"]=="1";
+      qDebug() << "applyFromSave(): checkedFolders 2: "<<checkedFolders;
       return true;
     }
     else

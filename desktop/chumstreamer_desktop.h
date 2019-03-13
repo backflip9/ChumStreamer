@@ -97,7 +97,7 @@ private slots:
 
     void on_clearButton_clicked();
 
-    void dirModelMirror(ChumListItem* newItem,int index=-1);
+    void dirModelMirror(ChumListItem* newItem,/*bool checked,*/int index=-1);
     void artistModelMirror(ChumListItem* newItem,int index=-1);
     void playlistModelMirror(ChumListItem* newItem,int index=-1);
 
@@ -147,6 +147,9 @@ private:
     void toggleRandom();//virtual
     void toggleRandom(bool);//virtual
     void imageFromPixmap(QPixmap oneImage);
+    void setRepeatText();
+    void setRandomText();
+    //void clearListWidget();//{qobject_cast<QListWidget* >(sender())->clear();}
     //QJsonDocument readSave();
     //bool applyFromSave();
     /*

@@ -13,12 +13,12 @@ class modelList:public QObject
 
 public:
     explicit modelList():curr(-1){};
-    void insert(int i,const ChumListItem* value);
-    void append(const ChumListItem* value);
+    void insert(int i,ChumListItem* value);
+    void append(ChumListItem* value);
     bool find(const QString& needle);
     ChumListItem* at(int index){return candy.at(index);}
     int size(){return candy.size();}
-    void clear(){return candy.clear();}
+    void clear(){candy.clear(); emit listCleared();}
     bool isEmpty(){return candy.empty();}
     //bool hasCurrentItem(){return curr!=-1;}
     bool hasCurrentItem();
@@ -30,6 +30,7 @@ public:
     QList<ChumListItem* > candy;
 signals:
     void listChanged(ChumListItem* newItem,int index=-1);//if we're appending, we leave it at -1
+    void listCleared();
     //void testSignal(){return;}
 private:
     //int curr=-1;

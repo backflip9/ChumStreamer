@@ -47,7 +47,7 @@ signals:
     void newFolder(ChumListItem*)
     */
 public slots:
-    virtual void dirModelMirror(ChumListItem* newItem,int index=-1)=0;//pure virtual
+    virtual void dirModelMirror(ChumListItem* newItem,/*bool checked,*/int index=-1)=0;//pure virtual
     virtual void artistModelMirror(ChumListItem* newItem,int index=-1)=0;//pure virtual
     virtual void playlistModelMirror(ChumListItem* newItem,int index=-1)=0;//pure virtual
 
