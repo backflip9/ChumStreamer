@@ -1,5 +1,5 @@
 #include "clickablelist.h"
-#include "chumlistitem.h"
+#include "../core/chumlistitem.h"
 //#include "sub_ping_3.h"
 #include<QDebug>
 #include<QMouseEvent>
@@ -32,6 +32,8 @@ void clickableList::keyPressEvent(QKeyEvent* k)
       break;
     case Qt::Key_J:
     case Qt::Key_Down:
+      setCurrentRow(currentRow()<count()-1?currentRow()+1:0);
+      /*
       if(currentRow()<count()-1)
       {
         setCurrentRow(currentRow()+1);
@@ -40,9 +42,12 @@ void clickableList::keyPressEvent(QKeyEvent* k)
       {//loop around
         setCurrentRow(0);
       }
+      */
       break;
     case Qt::Key_K:
     case Qt::Key_Up:
+      setCurrentRow(currentRow()>0?currentRow()-1:count()-1);
+      /*
       if(currentRow()>0)
       {
         setCurrentRow(currentRow()-1);
@@ -51,15 +56,13 @@ void clickableList::keyPressEvent(QKeyEvent* k)
       {
         setCurrentRow(count()-1);
       }
-
+      */
       break;
     case Qt::Key_L:
     case Qt::Key_Return:
     case Qt::Key_Right:
       if(currentItem()!=nullptr)
-      {
         emit ReturnKey();
-      }
       break;
     case Qt::Key_H:
     case Qt::Key_Left:
