@@ -5,10 +5,10 @@ Qt-based Subsonic/Airsonic Client with Vim controls
 <h2>Keybinds</h2>
 | Keystroke | Action |
 | --- | --- |
-| `H` \| `←` | navigate up one folder |
-| `J` \| `↓` | move folder selector down by one row |
+| `H` or `←` | navigate up one folder |
+| `J` or `↓` | move folder selector down by one row |
 | `K` | move folder selector up by one row |
-| `L`\| `→` \| `⏎` | navigate into the selected folder. if the selected item is a song, append that song to the playlist |
+| `L`or `→` or `⏎` | navigate into the selected folder. if the selected item is a song, append that song to the playlist |
 | `A` | append the selected item to the playlist |
 | `E` | prepend the selected item to the playlist |
 | `X` | clear the playlist |
