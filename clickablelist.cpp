@@ -34,7 +34,7 @@ void clickableList::keyPressEvent(QKeyEvent* k)
     case Qt::Key_Down:
       if(currentRow()<count()-1)
       {
-        setCurrentRow(currentRow()+1);
+        setCurrentRow(currentRow() + 1);
       }
       else
       {//loop around
@@ -56,7 +56,7 @@ void clickableList::keyPressEvent(QKeyEvent* k)
     case Qt::Key_L:
     case Qt::Key_Return:
     case Qt::Key_Right:
-      if(currentItem()!=nullptr)
+      if(currentItem() != nullptr)
       {
         emit ReturnKey();
       }

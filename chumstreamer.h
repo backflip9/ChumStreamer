@@ -1,11 +1,14 @@
 #ifndef CHUMSTREAMER_H
 #define CHUMSTREAMER_H
 
+#define APP_NAME "ChumStreamer"
+
 #include <QMainWindow>
 #include <QMainWindow>
-#include<QtNetwork/QNetworkAccessManager>
-#include<QVector>
-#include<QMediaPlayer>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QVector>
+#include <QMediaPlayer>
+#include <memory>
 #include "musicfolderinfo.h"
 
 //forward declarations
@@ -17,6 +20,7 @@ class QByteArray;
 class QMediaPlayer;
 class ChumListItem;
 class QDomNode;
+class QShortcut;
 
 namespace Ui {
 class chumstreamer;
@@ -29,16 +33,13 @@ class chumstreamer : public QMainWindow
 public:
     explicit chumstreamer(QWidget *parent = nullptr);
     ~chumstreamer();
-    QUrl& Server(){return server;}
-    QString& Username(){return username;}
-    QString& Password(){return password;}
     void setDir(const QString& dir);
     //public for authdialog to use
     void writeSave();
+    QUrl server;
 
 private slots:
     //buttons:
-    void on_pushButton_clicked();
     void bufferStream();
     void notifySongEnd();
     //void playFile();
@@ -60,8 +61,8 @@ private slots:
 
     void on_playPauseButton_clicked();
 
-    void on_pushButton_2_clicked();
     void setSongInfo();
+
 
 
     void on_artistListWidget_currentRowChanged(int currentRow);
@@ -95,32 +96,50 @@ private slots:
 
     void on_clearButton_clicked();
 
+    void on_stopButton_clicked();
+
+    void on_connectButton_clicked();
+
 private:
+    typedef std::unique_ptr<QShortcut> ShortcutPtr;
+#define CS_DEFINE_SHORTCUT(name) \
+    ShortcutPtr name##Shortcut;
+
+    CS_DEFINE_SHORTCUT(play)
+    CS_DEFINE_SHORTCUT(nextTrack)
+    CS_DEFINE_SHORTCUT(stop)
+    CS_DEFINE_SHORTCUT(repeatToggle)
+    CS_DEFINE_SHORTCUT(randomToggle)
+    ShortcutPtr folderListWidgetSelectShortcut;
+
+    /*
+    std::unique_ptr<QShortcut> playPauseShortcut;
+    std::unique_ptr<QShortcut> nextSongShortcut;
+    std::unique_ptr<QShortcut> stopShortcut;
+    std::unique_ptr<QShortcut> repeatShortcut;
+    std::unique_ptr<QShortcut> randomShortcut;
+    */
     Ui::chumstreamer *ui;
     QNetworkAccessManager manager;
     //QVector<QNetworkReply* > replyVec;
     //QNetworkReply* reply;
     QString cacheFilePath;
     //QString server="";
-    QUrl server;
-    QString username="";
-    QString password="";
     QString filePath;
     QUrl buildQueryString(QString path="");
     void setMusicFolders();
     bool handleNetworkError(QNetworkReply* reply,QString funcName="");
-    void songInfoDisplay(bool hide);
+    void songInfoDisplay(bool);
     QStringList artistList;
     QVector<musicFolderInfo> musicFolderVec;
-    void playlistAddFromChumListItem(ChumListItem* oneChum,bool prepend);
+    void playlistAddFromChumListItem(ChumListItem*,bool);
     QVector<musicFolderInfo> prevDirIDVec;
     void keyPressEvent(QKeyEvent*);
-    void mouseReleaseEvent(QMouseEvent*);
     //void addToPlaylistFromSlot(bool prepend,ChumListItem optionalChum=NULL);
-    void addToPlaylistFromSlot(bool prepend,ChumListItem* optionalChum=NULL);
+    void addToPlaylistFromSlot(bool, ChumListItem* = nullptr);
     QMediaPlayer* player = new QMediaPlayer;
     QByteArray currentSong;
-    const int DEFAULT_VOLUME=20;
+    const int kDefaultVolume = 20;
     int getCurrentPlaylistIndex();
     void streamSong();
     bool chooseNext();
@@ -128,20 +147,20 @@ private:
     bool latestPrepend=false;
     //will work on this later
     //void streamSongQIO();
-    void firstRecursiveRequest(QString id);
-    void playlistAddFromNode(QDomNode oneDir);
-    void setImage(QString songID);
-    void getSongInfo(QString songID);
+    void firstRecursiveRequest(QString);
+    void playlistAddFromNode(QDomNode);
+    void setImage(const QString&);
+    void getSongInfo(QString);
     void grayOutPlaylist();
     QString currentAlbumArt="0";
     bool repeating();
     void toggleRepeating();
-    void toggleRepeating(bool);
+    void setRepeating(bool);
     bool random();
     void toggleRandom();
-    void toggleRandom(bool);
+    void setRandom(bool);
     //QJsonDocument readSave();
-    bool applyFromSave();
+    bool loadFromSave();
     bool hasRed();
     QString checkedFolders;
 };
