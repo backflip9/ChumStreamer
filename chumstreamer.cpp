@@ -35,18 +35,18 @@
   CS_INSTANTIATE_SHORTCUT(name, _CS_CTRL_KEYS(keys))
 
 #define CS_INSTANTIATE_SHORTCUT(name, keys) \
-  this->name ## CS_SHORTCUT_PREFIX = std::make_unique<QShortcut>(QKeySequence(keys), this);
+  this->CONCAT(name, CS_SHORTCUT_SUFFIX) = std::make_unique<QShortcut>(QKeySequence(keys), this);
 
 #define CS_IMPLEMENT_SHORTCUT_LAMBDA(name, keys, lambda) \
   do \
   { \
     CS_INSTANTIATE_SHORTCUT(name, keys) \
-    connect(this->name ## CS_SHORTCUT_PREFIX.get(), &QShortcut::activated, this, lambda); \
+    connect(this->CONCAT(name, CS_SHORTCUT_SUFFIX).get(), &QShortcut::activated, this, lambda); \
   } while (false)
 
 
 #define CS_IMPLEMENT_SHORTCUT(name, keys) \
-  CS_IMPLEMENT_SHORTCUT_LAMBDA(name, keys, [this](){qDebug() << #name " " TOSTRING(CS_SHORTCUT_PREFIX) "!"; chumstreamer::on_ ## name ## Button_clicked();})
+  CS_IMPLEMENT_SHORTCUT_LAMBDA(name, keys, [this](){qDebug() << #name " " TOSTRING(CS_SHORTCUT_SUFFIX) "!"; chumstreamer::on_ ## name ## Button_clicked();})
 
 #define CS_IMPLEMENT_SHORTCUT_CTRL(name, keys) CS_IMPLEMENT_SHORTCUT(name, _CS_CTRL_KEYS(keys))
 

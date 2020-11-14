@@ -11,6 +11,8 @@
 #include <memory>
 #include "musicfolderinfo.h"
 
+#define CONCAT(arg1, arg2) arg1 ## arg2
+
 //forward declarations
 class QNetworkReply;
 class QFile;
@@ -102,9 +104,9 @@ private slots:
 
 private:
     typedef std::unique_ptr<QShortcut> ShortcutPtr;
-#define CS_SHORTCUT_PREFIX Shortcut
+#define CS_SHORTCUT_SUFFIX Shortcut
 #define CS_DEFINE_SHORTCUT(name) \
-    ShortcutPtr name ## CS_SHORTCUT_PREFIX;
+    ShortcutPtr CONCAT(name, CS_SHORTCUT_SUFFIX);
 
     CS_DEFINE_SHORTCUT(play)
     CS_DEFINE_SHORTCUT(nextTrack)
