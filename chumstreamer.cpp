@@ -28,7 +28,6 @@
 
 #define TOSTRING2(arg) #arg
 #define TOSTRING(arg) TOSTRING2(arg)
-#define CS_SHORTCUT_PREFIX Shortcut
 
 #define _CS_CTRL_KEYS(keys) Qt::CTRL + keys
 
