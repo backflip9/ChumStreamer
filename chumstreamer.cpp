@@ -4,6 +4,7 @@
 #include<QFile>
 #include<QBuffer>
 //#include<QListWidgetItem>
+#include<QClipboard>
 #include<QDomDocument>
 #include<QVector>
 #include<QStringListModel>
@@ -25,22 +26,32 @@
 #include "ui_chumstreamer.h"
 #include<time.h>
 
+#define TOSTRING2(arg) #arg
+#define TOSTRING(arg) TOSTRING2(arg)
+#define CS_SHORTCUT_PREFIX Shortcut
+
 #define _CS_CTRL_KEYS(keys) Qt::CTRL + keys
 
 #define CS_INSTANTIATE_SHORTCUT_CTRL(name, keys) \
   CS_INSTANTIATE_SHORTCUT(name, _CS_CTRL_KEYS(keys))
 
 #define CS_INSTANTIATE_SHORTCUT(name, keys) \
-  this->name ## Shortcut = std::make_unique<QShortcut>(QKeySequence(keys), this);
+  this->name ## CS_SHORTCUT_PREFIX = std::make_unique<QShortcut>(QKeySequence(keys), this);
 
-#define CS_IMPLEMENT_SHORTCUT(name, keys) \
+#define CS_IMPLEMENT_SHORTCUT_LAMBDA(name, keys, lambda) \
   do \
   { \
     CS_INSTANTIATE_SHORTCUT(name, keys) \
-    connect(this->name ## Shortcut.get(), &QShortcut::activated, this, [this](){qDebug() << #name " shortcut!"; chumstreamer::on_ ## name ## Button_clicked();}); \
-  } while(false)
+    connect(this->name ## CS_SHORTCUT_PREFIX.get(), &QShortcut::activated, this, lambda); \
+  } while (false)
+
+
+#define CS_IMPLEMENT_SHORTCUT(name, keys) \
+  CS_IMPLEMENT_SHORTCUT_LAMBDA(name, keys, [this](){qDebug() << #name " " TOSTRING(CS_SHORTCUT_PREFIX) "!"; chumstreamer::on_ ## name ## Button_clicked();})
 
 #define CS_IMPLEMENT_SHORTCUT_CTRL(name, keys) CS_IMPLEMENT_SHORTCUT(name, _CS_CTRL_KEYS(keys))
+
+#define CS_IMPLEMENT_SHORTCUT_CTRL_LAMBDA(name, keys, lambda) CS_IMPLEMENT_SHORTCUT_LAMBDA(name, _CS_CTRL_KEYS(keys), lambda)
 
 
 chumstreamer::chumstreamer(QWidget *parent)
@@ -54,9 +65,8 @@ chumstreamer::chumstreamer(QWidget *parent)
   CS_IMPLEMENT_SHORTCUT_CTRL(stop, Qt::Key_H);
   CS_IMPLEMENT_SHORTCUT_CTRL(repeatToggle, Qt::Key_R);
   CS_IMPLEMENT_SHORTCUT_CTRL(randomToggle, Qt::Key_A);
-  CS_INSTANTIATE_SHORTCUT_CTRL(folderListWidgetSelect, Qt::Key_Y);
-  connect(this->folderListWidgetSelectShortcut.get(), &QShortcut::activated, this, [this](){ui->musicFolderListWidget->setFocus(Qt::TabFocusReason);});
-  
+  CS_IMPLEMENT_SHORTCUT_CTRL_LAMBDA(folderListWidgetSelect, Qt::Key_Y, [this](){ui->musicFolderListWidget->setFocus(Qt::TabFocusReason);});
+  CS_IMPLEMENT_SHORTCUT_CTRL_LAMBDA(copyTitle, Qt::Key_C, [this](){QGuiApplication::clipboard()->setText(this->ui->songTitleLabel->text());});
 
   srand(time(nullptr));
   ui->setupUi(this);

@@ -102,23 +102,18 @@ private slots:
 
 private:
     typedef std::unique_ptr<QShortcut> ShortcutPtr;
+#define CS_SHORTCUT_PREFIX Shortcut
 #define CS_DEFINE_SHORTCUT(name) \
-    ShortcutPtr name##Shortcut;
+    ShortcutPtr name ## CS_SHORTCUT_PREFIX;
 
     CS_DEFINE_SHORTCUT(play)
     CS_DEFINE_SHORTCUT(nextTrack)
     CS_DEFINE_SHORTCUT(stop)
     CS_DEFINE_SHORTCUT(repeatToggle)
     CS_DEFINE_SHORTCUT(randomToggle)
-    ShortcutPtr folderListWidgetSelectShortcut;
+    CS_DEFINE_SHORTCUT(copyTitle)
+    CS_DEFINE_SHORTCUT(folderListWidgetSelect)
 
-    /*
-    std::unique_ptr<QShortcut> playPauseShortcut;
-    std::unique_ptr<QShortcut> nextSongShortcut;
-    std::unique_ptr<QShortcut> stopShortcut;
-    std::unique_ptr<QShortcut> repeatShortcut;
-    std::unique_ptr<QShortcut> randomShortcut;
-    */
     Ui::chumstreamer *ui;
     QNetworkAccessManager manager;
     //QVector<QNetworkReply* > replyVec;
