@@ -969,7 +969,8 @@ void chumstreamer::writeSave()
 bool chumstreamer::loadFromSave()
 {
   qDebug() << "hhhmmmmmmmmmmmmmmmmmmm";
-  if(QFile saveFile(cacheFilePath); saveFile.exists())
+  QFile saveFile(cacheFilePath); 
+  if(saveFile.exists())
   {
     if(saveFile.open(QIODevice::ReadOnly))
     {
