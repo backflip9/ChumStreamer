@@ -58,6 +58,7 @@ chumstreamer::chumstreamer(QWidget *parent)
   , ui{new Ui::chumstreamer}
   , cacheFilePath{QDir::homePath() + "/chumstreamer.json"}
   , filePath{QDir::homePath() + "/Documents/tmpDownload.xml"}
+  , latestPrepend{false}
 {
   CS_IMPLEMENT_SHORTCUT_CTRL(play, Qt::Key_G);
   CS_IMPLEMENT_SHORTCUT_CTRL(nextTrack, Qt::Key_J);

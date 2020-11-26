@@ -141,9 +141,7 @@ private:
     void streamSong();
     bool chooseNext();
     //stores whether the user last pressed E or A, since we're going to be adding playlist items in slot functions that i don't know how to pass args to
-    bool latestPrepend=false;
-    //will work on this later
-    //void streamSongQIO();
+    bool latestPrepend;
     void firstRecursiveRequest(QString);
     void playlistAddFromNode(QDomNode);
     void setImage(const QString&);
@@ -156,7 +154,6 @@ private:
     bool random();
     void toggleRandom();
     void setRandom(bool);
-    //QJsonDocument readSave();
     bool loadFromSave();
     bool hasRed();
     QString checkedFolders;
