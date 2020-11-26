@@ -188,7 +188,7 @@ void chumstreamer::getMusicFolders()
     ChumListItem *oneFolderCheckbox = new ChumListItem(oneMusicFolder.attributes().namedItem("name").nodeValue(),oneMusicFolder.attributes().namedItem("id").nodeValue());
     ui->musicFolderListWidget->addItem(oneFolderCheckbox);
     oneFolderCheckbox->setFlags(oneFolderCheckbox->flags() | Qt::ItemIsUserCheckable);
-    oneFolderCheckbox->setCheckState(checkedFolders[j]== "0" ? Qt::Unchecked : Qt::Checked);
+    oneFolderCheckbox->setCheckState(checkedFolders[j]== '0' ? Qt::Unchecked : Qt::Checked);
   }
   this->on_connectButton_clicked();
 }
