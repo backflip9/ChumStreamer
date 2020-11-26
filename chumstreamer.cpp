@@ -59,6 +59,7 @@ chumstreamer::chumstreamer(QWidget *parent)
   , cacheFilePath{QDir::homePath() + "/chumstreamer.json"}
   , filePath{QDir::homePath() + "/Documents/tmpDownload.xml"}
   , latestPrepend{false}
+  , currentAlbumArt{"0"}
 {
   CS_IMPLEMENT_SHORTCUT_CTRL(play, Qt::Key_G);
   CS_IMPLEMENT_SHORTCUT_CTRL(nextTrack, Qt::Key_J);
@@ -75,7 +76,7 @@ chumstreamer::chumstreamer(QWidget *parent)
   ui->nextButton->hide();
   ui->playPauseButton->hide();
   ui->volumeSlider->setTickInterval(2);
-  ui->volumeSlider->setRange(0,100);
+  ui->volumeSlider->setRange(0, 100);
   ui->volumeSlider->setValue(kDefaultVolume);
 
   //hide individual song info(should be blank if we're just starting up)
@@ -98,8 +99,7 @@ chumstreamer::~chumstreamer()
     delete ui;
 }
 
-
-QUrl chumstreamer::buildQueryString(QString page)
+QUrl chumstreamer::buildQueryString(const QString& page)
 {
   QUrl result;
   result.setHost(this->server.host());
@@ -342,7 +342,7 @@ void chumstreamer::displayImage()
   ui->imageLabel->show();
 }
 
-bool chumstreamer::handleNetworkError(QNetworkReply* reply, QString)
+bool chumstreamer::handleNetworkError(QNetworkReply* reply, const QString&)
 {
   //to avoid copypaste
   if(reply->error())
